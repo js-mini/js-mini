@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JewelShot Mini - Mücevher Fotoğraf Dönüştürücü</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            border-radius: 2px;
+        }
+
+        /* Image Preview Areas */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .image-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-box {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        .image-box:hover {
+            border-color: rgba(255, 215, 0, 0.5);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .image-box .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.4);
+            padding: 0.5rem;
+            text-align: center;
+        }
+
+        .image-box .placeholder svg {
+            width: 28px;
+            height: 28px;
+            opacity: 0.5;
+        }
+
+        .image-box .placeholder span {
+            font-size: 0.7rem;
+        }
+
+        .image-box.has-image .placeholder {
+            display: none;
+        }
+
+        /* Delete Button */
+        .delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 71, 87, 0.9);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+
+        .delete-btn:hover {
+            background: #ff4757;
+            transform: scale(1.1);
+        }
+
+        .delete-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .image-box.has-image .delete-btn {
+            display: flex;
+        }
+
+        .image-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .image-label-sub {
+            font-size: 0.65rem;
+            color: rgba(255, 215, 0, 0.6);
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Hidden file inputs */
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Lock Position Toggle */
+        .lock-position-wrapper {
+            margin-top: 0.5rem;
+        }
+
+        .lock-position-toggle {
+            display: flex;
+            gap: 0.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 3px;
+        }
+
+        .lock-position-toggle label {
+            flex: 1;
+            text-align: center;
+            padding: 0.35rem 0.5rem;
+            font-size: 0.65rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .lock-position-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .lock-position-toggle input[type="radio"]:checked+label {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        /* Prompt Chain Builder */
+        .prompt-chain {
+            margin-top: 1rem;
+        }
+
+        .prompt-chain-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .prompt-chain-title::before {
+            content: '⚡';
+        }
+
+        .prompt-layer {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-layer.inactive {
+            opacity: 0.5;
+        }
+
+        .prompt-layer.inactive .layer-content {
+            display: none;
+        }
+
+        .layer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+        }
+
+        .layer-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .layer-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .layer-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .layer-tag {
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .layer-toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .layer-toggle.active {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+        }
+
+        .layer-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .layer-toggle.active::after {
+            left: 21px;
+        }
+
+        .layer-content {
+            padding: 0.6rem 0.8rem;
+        }
+
+        .layer-textarea {
+            width: 100%;
+            min-height: 60px;
+            padding: 0.6rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.75rem;
+            font-family: inherit;
+            resize: vertical;
+            line-height: 1.5;
+            transition: all 0.3s ease;
+        }
+
+        .layer-textarea:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .layer-textarea:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        .layer-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Negative prompt special styling */
+        .prompt-layer.negative .layer-tag {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff6b7a;
+        }
+
+        .prompt-layer.negative .layer-toggle.active {
+            background: linear-gradient(135deg, #ff6b7a, #ff4757);
+        }
+
+        /* Final Prompt Preview */
+        .final-prompt-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .final-prompt-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .final-prompt-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .copy-btn {
+            padding: 0.3rem 0.6rem;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 6px;
+            color: #ffd700;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 215, 0, 0.25);
+        }
+
+        .copy-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .final-prompt-preview {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 0.75rem;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .final-prompt-preview::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .final-prompt-preview::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .final-prompt-preview::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        /* Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .option-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.5rem;
+        }
+
+        .option-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-group select:hover {
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .option-group select:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        .option-group select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: #1a1a2e;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Result Section */
+        .result-section {
+            grid-column: 1 / -1;
+        }
+
+        .result-content {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+
+        .result-image-container {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .result-image {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .result-placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
+        .result-placeholder svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .result-actions {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .result-info {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .result-info p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-info p:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-info strong {
+            color: #ffd700;
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 4px solid rgba(255, 215, 0, 0.2);
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .loading-timer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffd700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffb347);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Status Messages */
+        .status-bar {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .status-bar.success {
+            display: block;
+            background: rgba(46, 213, 115, 0.15);
+            border: 1px solid rgba(46, 213, 115, 0.3);
+            color: #2ed573;
+        }
+
+        .status-bar.error {
+            display: block;
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            color: #ff4757;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .image-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .result-content {
+                flex-direction: column;
+            }
+
+            .result-image-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>💎 JewelShot Mini</h1>
+            <p>Mücevher fotoğraflarını profesyonel e-ticaret görsellerine dönüştürün</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Input Section -->
+            <div class="card">
+                <h2 class="card-title">Görseller</h2>
+                <div class="image-grid">
+                    <!-- Reference/Pose Image -->
+                    <div class="image-wrapper">
+                        <div class="image-box" id="referenceBox"
+                            onclick="document.getElementById('referenceInput').click()">
+                            <button class="delete-btn" onclick="event.stopPropagation(); clearImage('reference')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <img src="" alt="Referans Görsel" id="referencePreview" style="display: none;">
+                            <div class="placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
+                                </svg>
+                                <span>Referans Yükle</span>
+                            </div>
+                        </div>
+                        <p class="image-label">Referans<span class="image-label-sub">Duruş Aksı</span></p>
+                        <input type="file" id="referenceInput" accept="image/*">
+                    </div>
+
+                    <!-- Main Jewelry Image -->
+                    <div class="image-wrapper">
+                        <div class="image-box" id="jewelryBox"
+                            onclick="document.getElementById('jewelryInput').click()">
+                            <button class="delete-btn" onclick="event.stopPropagation(); clearImage('jewelry')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <img src="" alt="Takı Görseli" id="jewelryPreview" style="display: none;">
+                            <div class="placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                                <span>Takı Yükle</span>
+                            </div>
+                        </div>
+                        <p class="image-label">Ana Takı<span class="image-label-sub">Ana Görsel</span></p>
+                        <input type="file" id="jewelryInput" accept="image/*">
+                    </div>
+
+                    <!-- Detail/Macro Image -->
+                    <div class="image-wrapper">
+                        <div class="image-box" id="detailBox" onclick="document.getElementById('detailInput').click()">
+                            <button class="delete-btn" onclick="event.stopPropagation(); clearImage('detail')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <img src="" alt="Detay Görseli" id="detailPreview" style="display: none;">
+                            <div class="placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                                <span>Detay Yükle</span>
+                            </div>
+                        </div>
+                        <p class="image-label">Detay<span class="image-label-sub">Yakın Plan / Macro</span></p>
+                        <input type="file" id="detailInput" accept="image/*">
+                    </div>
+
+                    <!-- Lock/Clasp Image -->
+                    <div class="image-wrapper">
+                        <div class="image-box" id="lockBox" onclick="document.getElementById('lockInput').click()">
+                            <button class="delete-btn" onclick="event.stopPropagation(); clearImage('lock')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <img src="" alt="Kilit Görseli" id="lockPreview" style="display: none;">
+                            <div class="placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                <span>Kilit Yükle</span>
+                            </div>
+                        </div>
+                        <p class="image-label">Kilit<span class="image-label-sub">Ürün Kilidi</span></p>
+                        <input type="file" id="lockInput" accept="image/*">
+
+                        <!-- Lock Position Toggle -->
+                        <div class="lock-position-wrapper">
+                            <div class="lock-position-toggle">
+                                <input type="radio" name="lockPosition" id="lockTop" value="top" checked>
+                                <label for="lockTop">Üstte</label>
+                                <input type="radio" name="lockPosition" id="lockBottom" value="bottom">
+                                <label for="lockBottom">Altta</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Prompt Chain Builder -->
+                <div class="prompt-chain">
+                    <div class="prompt-chain-title">Dinamik Prompt Zinciri</div>
+
+                    <!-- Layer 1: Master Header -->
+                    <div class="prompt-layer" id="layerHeader" data-layer="header">
+                        <div class="layer-header" onclick="toggleLayer('header')">
+                            <div class="layer-info">
+                                <span class="layer-icon">📐</span>
+                                <span class="layer-name">Master Header</span>
+                                <span class="layer-tag">[GUIDE_LINE]</span>
+                            </div>
+                            <div class="layer-toggle active" id="toggleHeader"></div>
+                        </div>
+                        <div class="layer-content">
+                            <textarea class="layer-textarea" id="contentHeader"
+                                oninput="updateFinalPrompt()">A professional high-end retouched e-commerce studio photograph. CORE GEOMETRY: Strictly follow the vertical elliptical path defined in [GUIDE_LINE] (Image 1). BACKGROUND: Pure solid white (RGB: 255, 255, 255). Derived from [BASE_PRODUCT] (Image 2).</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Layer 2: Product Details -->
+                    <div class="prompt-layer" id="layerProduct" data-layer="product">
+                        <div class="layer-header" onclick="toggleLayer('product')">
+                            <div class="layer-info">
+                                <span class="layer-icon">💎</span>
+                                <span class="layer-name">Product Details</span>
+                                <span class="layer-tag">[TEXTURE_DETAIL]</span>
+                            </div>
+                            <div class="layer-toggle active" id="toggleProduct"></div>
+                        </div>
+                        <div class="layer-content">
+                            <textarea class="layer-textarea" id="contentProduct"
+                                oninput="updateFinalPrompt()">14K solid yellow gold with the exact weave texture from [TEXTURE_DETAIL] (Image 3). Integrate the specific lobster clasp from [HARDWARE_CLASP] (Image 4) at 12 o'clock.</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Layer 3: Master Footer -->
+                    <div class="prompt-layer" id="layerFooter" data-layer="footer">
+                        <div class="layer-header" onclick="toggleLayer('footer')">
+                            <div class="layer-info">
+                                <span class="layer-icon">✨</span>
+                                <span class="layer-name">Master Footer</span>
+                                <span class="layer-tag">QUALITY_FINISH</span>
+                            </div>
+                            <div class="layer-toggle active" id="toggleFooter"></div>
+                        </div>
+                        <div class="layer-content">
+                            <textarea class="layer-textarea" id="contentFooter"
+                                oninput="updateFinalPrompt()">QUALITY & FINISH: Immaculate museum-quality retouched. Floating in mid-air. Absolutely NO DROP SHADOWS on background. Subtle ambient floor shadow only. 8k resolution.</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Layer 4: Negative Prompt -->
+                    <div class="prompt-layer negative" id="layerNegative" data-layer="negative">
+                        <div class="layer-header" onclick="toggleLayer('negative')">
+                            <div class="layer-info">
+                                <span class="layer-icon">🚫</span>
+                                <span class="layer-name">Negative Prompt</span>
+                                <span class="layer-tag">NEGATIVE_SHIELD</span>
+                            </div>
+                            <div class="layer-toggle active" id="toggleNegative"></div>
+                        </div>
+                        <div class="layer-content">
+                            <textarea class="layer-textarea" id="contentNegative"
+                                oninput="updateFinalPrompt()">mannequin, neck bust, human model, blurry, drop shadow, grain, noise, pixelation, dirt, scratches, messy details.</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Final Prompt Preview -->
+                    <div class="final-prompt-section">
+                        <div class="final-prompt-header">
+                            <span class="final-prompt-title">📋 Final Prompt</span>
+                            <button class="copy-btn" onclick="copyFinalPrompt()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                Kopyala
+                            </button>
+                        </div>
+                        <div class="final-prompt-preview" id="finalPromptPreview">
+                            <!-- Final prompt will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Options Section -->
+            <div class="card">
+                <h2 class="card-title">Ayarlar</h2>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="aspectRatio">Görüntü Oranı</label>
+                        <select id="aspectRatio">
+                            <option value="1:1" selected>1:1 (Kare)</option>
+                            <option value="4:3">4:3</option>
+                            <option value="3:4">3:4</option>
+                            <option value="16:9">16:9 (Geniş)</option>
+                            <option value="9:16">9:16 (Dikey)</option>
+                            <option value="3:2">3:2</option>
+                            <option value="2:3">2:3</option>
+                            <option value="4:5">4:5</option>
+                            <option value="5:4">5:4</option>
+                            <option value="21:9">21:9 (Ultra Geniş)</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="resolution">Çözünürlük</label>
+                        <select id="resolution">
+                            <option value="1K">1K</option>
+                            <option value="2K" selected>2K</option>
+                            <option value="4K">4K</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="generateBtn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Dönüştür
+                    </button>
+                    <button class="btn btn-secondary" id="resetBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Yeni
+                    </button>
+                </div>
+
+                <div class="status-bar" id="statusBar"></div>
+            </div>
+
+            <!-- Result Section -->
+            <div class="card result-section">
+                <h2 class="card-title">Sonuç</h2>
+                <div class="result-content">
+                    <div class="result-image-container">
+                        <div class="result-image" id="resultBox">
+                            <div class="result-placeholder" id="resultPlaceholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p>Sonuç burada görünecek</p>
+                            </div>
+                            <img src="" alt="Sonuç" id="resultImage" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <div class="result-info" id="resultInfo" style="display: none;">
+                            <p><strong>Durum:</strong> <span id="resultStatus">Hazır</span></p>
+                            <p><strong>İşlem Süresi:</strong> <span id="resultDuration">-</span></p>
+                            <p><strong>Oluşturulma:</strong> <span id="resultTime">-</span></p>
+                        </div>
+                        <button class="btn btn-primary" id="saveBtn" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p class="loading-text">Görsel işleniyor...</p>
+            <div class="loading-timer">
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <p class="progress-text" id="progressText">Tahmini süre: ~30-60 saniye</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const FAL_API_KEY = '8d273839-eed1-47bd-89b3-33366db8c7e6:4bb9f35c5e75753a23a828458e6e47a7';
+        const FAL_ENDPOINT = 'https://fal.run/fal-ai/nano-banana-pro/edit';
+
+        // Elements
+        const referencePreview = document.getElementById('referencePreview');
+        const referenceInput = document.getElementById('referenceInput');
+        const referenceBox = document.getElementById('referenceBox');
+
+        const jewelryPreview = document.getElementById('jewelryPreview');
+        const jewelryInput = document.getElementById('jewelryInput');
+        const jewelryBox = document.getElementById('jewelryBox');
+
+        const detailPreview = document.getElementById('detailPreview');
+        const detailInput = document.getElementById('detailInput');
+        const detailBox = document.getElementById('detailBox');
+
+        const lockPreview = document.getElementById('lockPreview');
+        const lockInput = document.getElementById('lockInput');
+        const lockBox = document.getElementById('lockBox');
+
+        const aspectRatioSelect = document.getElementById('aspectRatio');
+        const resolutionSelect = document.getElementById('resolution');
+        const generateBtn = document.getElementById('generateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const resultImage = document.getElementById('resultImage');
+        const resultPlaceholder = document.getElementById('resultPlaceholder');
+        const resultInfo = document.getElementById('resultInfo');
+        const resultStatus = document.getElementById('resultStatus');
+        const resultDuration = document.getElementById('resultDuration');
+        const resultTime = document.getElementById('resultTime');
+        const statusBar = document.getElementById('statusBar');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const finalPromptPreview = document.getElementById('finalPromptPreview');
+
+        // Layer State
+        const layers = {
+            header: { active: true, element: 'layerHeader', toggle: 'toggleHeader', content: 'contentHeader' },
+            product: { active: true, element: 'layerProduct', toggle: 'toggleProduct', content: 'contentProduct' },
+            footer: { active: true, element: 'layerFooter', toggle: 'toggleFooter', content: 'contentFooter' },
+            negative: { active: true, element: 'layerNegative', toggle: 'toggleNegative', content: 'contentNegative' }
+        };
+
+        // State
+        let referenceImageDataUrl = null;
+        let jewelryImageDataUrl = null;
+        let detailImageDataUrl = null;
+        let lockImageDataUrl = null;
+        let resultImageUrl = null;
+        let timerInterval = null;
+        let startTime = null;
+
+        // Toggle Layer Active/Inactive
+        function toggleLayer(layerName) {
+            const layer = layers[layerName];
+            layer.active = !layer.active;
+
+            const layerElement = document.getElementById(layer.element);
+            const toggleElement = document.getElementById(layer.toggle);
+
+            if (layer.active) {
+                layerElement.classList.remove('inactive');
+                toggleElement.classList.add('active');
+            } else {
+                layerElement.classList.add('inactive');
+                toggleElement.classList.remove('active');
+            }
+
+            updateFinalPrompt();
+        }
+
+        // Update Final Prompt Preview
+        function updateFinalPrompt() {
+            const parts = [];
+
+            if (layers.header.active) {
+                parts.push(document.getElementById(layers.header.content).value.trim());
+            }
+            if (layers.product.active) {
+                parts.push(document.getElementById(layers.product.content).value.trim());
+            }
+            if (layers.footer.active) {
+                parts.push(document.getElementById(layers.footer.content).value.trim());
+            }
+
+            let finalPrompt = parts.join(' ');
+
+            if (layers.negative.active) {
+                const negativeContent = document.getElementById(layers.negative.content).value.trim();
+                if (negativeContent) {
+                    finalPrompt += `\n\n[NEGATIVE PROMPT]: ${negativeContent}`;
+                }
+            }
+
+            finalPromptPreview.textContent = finalPrompt || 'Aktif katman yok...';
+        }
+
+        // Build Final Prompt for API
+        function buildFinalPrompt() {
+            const parts = [];
+
+            if (layers.header.active) {
+                parts.push(document.getElementById(layers.header.content).value.trim());
+            }
+            if (layers.product.active) {
+                parts.push(document.getElementById(layers.product.content).value.trim());
+            }
+            if (layers.footer.active) {
+                parts.push(document.getElementById(layers.footer.content).value.trim());
+            }
+
+            let finalPrompt = parts.join(' ');
+
+            if (layers.negative.active) {
+                const negativeContent = document.getElementById(layers.negative.content).value.trim();
+                if (negativeContent) {
+                    finalPrompt += ` AVOID: ${negativeContent}`;
+                }
+            }
+
+            return finalPrompt;
+        }
+
+        // Copy Final Prompt to Clipboard
+        function copyFinalPrompt() {
+            const text = finalPromptPreview.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showStatus('Prompt panoya kopyalandı!', 'success');
+            }).catch(() => {
+                showStatus('Kopyalama başarısız.', 'error');
+            });
+        }
+
+        // Initialize
+        function init() {
+            // Event listeners for file inputs
+            referenceInput.addEventListener('change', (e) => handleImageUpload(e, 'reference'));
+            jewelryInput.addEventListener('change', (e) => handleImageUpload(e, 'jewelry'));
+            detailInput.addEventListener('change', (e) => handleImageUpload(e, 'detail'));
+            lockInput.addEventListener('change', (e) => handleImageUpload(e, 'lock'));
+
+            generateBtn.addEventListener('click', generateImage);
+            resetBtn.addEventListener('click', resetAll);
+            saveBtn.addEventListener('click', saveResult);
+
+            // Setup drag and drop for all image boxes
+            setupDragDrop(referenceBox, 'reference');
+            setupDragDrop(jewelryBox, 'jewelry');
+            setupDragDrop(detailBox, 'detail');
+            setupDragDrop(lockBox, 'lock');
+
+            // Initialize final prompt preview
+            updateFinalPrompt();
+        }
+
+        function setupDragDrop(element, type) {
+            element.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                element.style.borderColor = '#ffd700';
+                element.style.background = 'rgba(255, 215, 0, 0.1)';
+            });
+
+            element.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                element.style.borderColor = '';
+                element.style.background = '';
+            });
+
+            element.addEventListener('drop', (e) => {
+                e.preventDefault();
+                element.style.borderColor = '';
+                element.style.background = '';
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type.startsWith('image/')) {
+                    processFile(files[0], type);
+                }
+            });
+        }
+
+        function handleImageUpload(e, type) {
+            const file = e.target.files[0];
+            if (file) {
+                processFile(file, type);
+            }
+        }
+
+        function processFile(file, type) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+
+                switch (type) {
+                    case 'reference':
+                        referenceImageDataUrl = dataUrl;
+                        referencePreview.src = dataUrl;
+                        referencePreview.style.display = 'block';
+                        referenceBox.classList.add('has-image');
+                        break;
+                    case 'jewelry':
+                        jewelryImageDataUrl = dataUrl;
+                        jewelryPreview.src = dataUrl;
+                        jewelryPreview.style.display = 'block';
+                        jewelryBox.classList.add('has-image');
+                        break;
+                    case 'detail':
+                        detailImageDataUrl = dataUrl;
+                        detailPreview.src = dataUrl;
+                        detailPreview.style.display = 'block';
+                        detailBox.classList.add('has-image');
+                        break;
+                    case 'lock':
+                        lockImageDataUrl = dataUrl;
+                        lockPreview.src = dataUrl;
+                        lockPreview.style.display = 'block';
+                        lockBox.classList.add('has-image');
+                        break;
+                }
+
+                updateGenerateButton();
+                showStatus('Görsel yüklendi.', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateGenerateButton() {
+            // Enable generate button if at least one image is uploaded
+            const hasAnyImage = referenceImageDataUrl || jewelryImageDataUrl || detailImageDataUrl || lockImageDataUrl;
+            generateBtn.disabled = !hasAnyImage;
+        }
+
+        function clearImage(type) {
+            switch (type) {
+                case 'reference':
+                    referenceImageDataUrl = null;
+                    referencePreview.src = '';
+                    referencePreview.style.display = 'none';
+                    referenceBox.classList.remove('has-image');
+                    referenceInput.value = '';
+                    break;
+                case 'jewelry':
+                    jewelryImageDataUrl = null;
+                    jewelryPreview.src = '';
+                    jewelryPreview.style.display = 'none';
+                    jewelryBox.classList.remove('has-image');
+                    jewelryInput.value = '';
+                    break;
+                case 'detail':
+                    detailImageDataUrl = null;
+                    detailPreview.src = '';
+                    detailPreview.style.display = 'none';
+                    detailBox.classList.remove('has-image');
+                    detailInput.value = '';
+                    break;
+                case 'lock':
+                    lockImageDataUrl = null;
+                    lockPreview.src = '';
+                    lockPreview.style.display = 'none';
+                    lockBox.classList.remove('has-image');
+                    lockInput.value = '';
+                    break;
+            }
+            updateGenerateButton();
+            showStatus('Görsel silindi.', 'success');
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            let elapsed = 0;
+            const estimatedTime = 45; // 45 seconds estimated
+
+            timerInterval = setInterval(() => {
+                elapsed = Math.floor((Date.now() - startTime) / 1000);
+                timerDisplay.textContent = formatTime(elapsed);
+
+                // Update progress bar (assuming ~45 seconds average)
+                const progress = Math.min((elapsed / estimatedTime) * 100, 95);
+                progressBar.style.width = `${progress}%`;
+
+                if (elapsed < estimatedTime) {
+                    progressText.textContent = `Tahmini kalan: ~${estimatedTime - elapsed} saniye`;
+                } else {
+                    progressText.textContent = 'Neredeyse bitti...';
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            progressBar.style.width = '100%';
+        }
+
+        function getElapsedTime() {
+            if (startTime) {
+                return Math.floor((Date.now() - startTime) / 1000);
+            }
+            return 0;
+        }
+
+        function getLockPosition() {
+            const lockTopRadio = document.getElementById('lockTop');
+            return lockTopRadio.checked ? 'top' : 'bottom';
+        }
+
+        async function generateImage() {
+            const hasAnyImage = referenceImageDataUrl || jewelryImageDataUrl || detailImageDataUrl || lockImageDataUrl;
+            if (!hasAnyImage) {
+                showStatus('Lütfen en az bir görsel yükleyin.', 'error');
+                return;
+            }
+
+            loadingOverlay.classList.add('active');
+            generateBtn.disabled = true;
+            startTimer();
+
+            try {
+                // Build image_urls array in correct order
+                const imageUrls = [];
+                if (referenceImageDataUrl) imageUrls.push(referenceImageDataUrl);
+                if (jewelryImageDataUrl) imageUrls.push(jewelryImageDataUrl);
+                if (detailImageDataUrl) imageUrls.push(detailImageDataUrl);
+                if (lockImageDataUrl) imageUrls.push(lockImageDataUrl);
+
+                // Build the full prompt using the new dynamic prompt chain
+                const fullPrompt = buildFinalPrompt();
+
+                // Prepare the request
+                const requestBody = {
+                    prompt: fullPrompt,
+                    image_urls: imageUrls,
+                    aspect_ratio: aspectRatioSelect.value,
+                    resolution: resolutionSelect.value,
+                    output_format: "png",
+                    num_images: 1,
+                    safety_tolerance: "4"
+                };
+
+                console.log('Sending prompt:', fullPrompt);
+                console.log('Image count:', imageUrls.length);
+
+                const response = await fetch(FAL_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Key ${FAL_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const elapsedSeconds = getElapsedTime();
+                stopTimer();
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || `API Hatası: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.images && data.images.length > 0) {
+                    resultImageUrl = data.images[0].url;
+                    resultImage.src = resultImageUrl;
+                    resultImage.style.display = 'block';
+                    resultPlaceholder.style.display = 'none';
+                    resultInfo.style.display = 'block';
+                    resultStatus.textContent = 'Başarılı';
+                    resultDuration.textContent = formatTime(elapsedSeconds);
+                    resultTime.textContent = new Date().toLocaleString('tr-TR');
+                    saveBtn.disabled = false;
+                    showStatus(`Görsel başarıyla oluşturuldu! (${formatTime(elapsedSeconds)})`, 'success');
+                } else {
+                    throw new Error('API yanıtında görsel bulunamadı.');
+                }
+            } catch (error) {
+                stopTimer();
+                console.error('Generation error:', error);
+                showStatus(`Hata: ${error.message}`, 'error');
+            } finally {
+                loadingOverlay.classList.remove('active');
+                generateBtn.disabled = !jewelryImageDataUrl;
+            }
+        }
+
+        function resetAll() {
+            // Reset all images
+            referenceImageDataUrl = null;
+            referencePreview.src = '';
+            referencePreview.style.display = 'none';
+            referenceBox.classList.remove('has-image');
+            referenceInput.value = '';
+
+            jewelryImageDataUrl = null;
+            jewelryPreview.src = '';
+            jewelryPreview.style.display = 'none';
+            jewelryBox.classList.remove('has-image');
+            jewelryInput.value = '';
+
+            detailImageDataUrl = null;
+            detailPreview.src = '';
+            detailPreview.style.display = 'none';
+            detailBox.classList.remove('has-image');
+            detailInput.value = '';
+
+            lockImageDataUrl = null;
+            lockPreview.src = '';
+            lockPreview.style.display = 'none';
+            lockBox.classList.remove('has-image');
+            lockInput.value = '';
+
+            // Reset lock position to top
+            document.getElementById('lockTop').checked = true;
+
+            // Reset result
+            resultImageUrl = null;
+            resultImage.src = '';
+            resultImage.style.display = 'none';
+            resultPlaceholder.style.display = 'flex';
+            resultInfo.style.display = 'none';
+
+            // Reset timer display
+            timerDisplay.textContent = '00:00';
+            progressBar.style.width = '0%';
+            progressText.textContent = 'Tahmini süre: ~30-60 saniye';
+
+            // Reset buttons
+            generateBtn.disabled = true;
+            saveBtn.disabled = true;
+
+            // Reset prompt to default
+            promptInput.value = 'Bu mücevheri profesyonel bir e-ticaret ürün fotoğrafına dönüştür. Temiz ve zarif arka plan, profesyonel stüdyo aydınlatması, yüksek kalite lüks görünüm.';
+
+            // Clear status
+            statusBar.style.display = 'none';
+            statusBar.textContent = '';
+            statusBar.className = 'status-bar';
+
+            showStatus('Yeni işlem için hazır.', 'success');
+        }
+
+        async function saveResult() {
+            if (!resultImageUrl) {
+                showStatus('İndirilecek görsel yok.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(resultImageUrl);
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `jewelshot_${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+
+                showStatus('Görsel indirildi!', 'success');
+            } catch (error) {
+                console.error('Save error:', error);
+                showStatus('İndirme hatası. Lütfen tekrar deneyin.', 'error');
+            }
+        }
+
+        function showStatus(message, type) {
+            statusBar.textContent = message;
+            statusBar.className = `status-bar ${type}`;
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+
+</html>

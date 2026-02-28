@@ -1,26 +1,275 @@
+/* ============================================
+   JewelShot — Design System
+   ============================================
+   Vercel / Supabase inspired. Clean, minimal.
+   Dark-first. No animations. */
+
 @import "tailwindcss";
 
+/* ── Tokens ──────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand — warm gold */
+  --brand-50: #fef9ec;
+  --brand-100: #fcefc5;
+  --brand-200: #f9de86;
+  --brand-300: #f5c748;
+  --brand-400: #f3b820;
+  --brand-500: #e49a0a;
+  --brand-600: #ca7606;
+  --brand-700: #a85409;
+  --brand-800: #89420e;
+  --brand-900: #71370f;
+
+  /* Gray — Vercel style neutral */
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --gray-950: #0a0a0a;
+
+  /* Semantic */
+  --success: #22c55e;
+  --warning: #eab308;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* Surfaces — light */
+  --bg-primary: #ffffff;
+  --bg-secondary: var(--gray-50);
+  --bg-tertiary: var(--gray-100);
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text — light */
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-500);
+  --text-tertiary: var(--gray-400);
+  --text-brand: var(--brand-600);
+
+  /* Borders — light */
+  --border: var(--gray-200);
+  --border-light: var(--gray-100);
+  --border-focus: var(--brand-500);
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* Sidebar / Header */
+  --sidebar-w: 240px;
+  --header-h: 56px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Dark Mode ───────────────────────────────── */
+.dark {
+  --bg-primary: var(--gray-950);
+  --bg-secondary: var(--gray-900);
+  --bg-tertiary: var(--gray-800);
+  --bg-elevated: #111111;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  --text-primary: var(--gray-50);
+  --text-secondary: var(--gray-400);
+  --text-tertiary: var(--gray-600);
+  --text-brand: var(--brand-400);
+
+  --border: #1a1a1a;
+  --border-light: var(--gray-900);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base ────────────────────────────────────── */
+
+html {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100dvh;
+  font-size: 14px;
+}
+
+/* ── Focus ───────────────────────────────────── */
+:focus-visible {
+  outline: 1px solid var(--border);
+  outline-offset: 1px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Selection ───────────────────────────────── */
+::selection {
+  background-color: var(--gray-700);
+  color: var(--gray-100);
+}
+
+.dark ::selection {
+  background-color: var(--gray-700);
+  color: var(--gray-100);
+}
+
+/* ── Scrollbar ───────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--gray-300);
+  border-radius: var(--radius-full);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: var(--gray-700);
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Brand opacity utilities ─────────────────── */
+/* Tailwind v4 does NOT support /opacity on arbitrary CSS vars.
+   These classes replace bg-[var(--brand-500)]/10 patterns. */
+
+.bg-brand-subtle {
+  background-color: rgba(228, 154, 10, 0.08);
+}
+
+.bg-brand-muted {
+  background-color: rgba(228, 154, 10, 0.15);
+}
+
+.border-brand-subtle {
+  border-color: rgba(228, 154, 10, 0.25);
+}
+
+.bg-success-subtle {
+  background-color: rgba(34, 197, 94, 0.10);
+}
+
+.bg-error-subtle {
+  background-color: rgba(239, 68, 68, 0.10);
+}
+
+.bg-warning-subtle {
+  background-color: rgba(234, 179, 8, 0.10);
+}
+
+.bg-info-subtle {
+  background-color: rgba(59, 130, 246, 0.10);
+}
+
+/* ── Form elements ────────────────────────────── */
+.input {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.input:focus {
+  border-color: var(--border-focus);
+}
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-secondary) inset;
+  -webkit-text-fill-color: var(--text-primary);
+  caret-color: var(--text-primary);
+  border-color: var(--border);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.btn-primary {
+  height: 36px;
+  border-radius: var(--radius-md);
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Sidebar nav ─────────────────────────────── */
+.sidebar-link {
+  display: block;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.sidebar-link:hover {
+  color: var(--text-primary);
+}
+
+.sidebar-link[data-active] {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ── Skeleton loader ─────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg,
+      var(--bg-tertiary) 25%,
+      var(--bg-secondary) 50%,
+      var(--bg-tertiary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
 }
