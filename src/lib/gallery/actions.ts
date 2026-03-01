@@ -34,21 +34,29 @@ export async function getRecentGenerations(limit: number = 20): Promise<{ data: 
             return { data: null, error: "Görseller yüklenirken bir hata oluştu." };
         }
 
-        // Map the storage paths to actual full public URLs
-        const mappedData = (data as GalleryImageRecord[]).map((record) => {
-            // output_image_url is typically 'userid/filename.png'
-            // if it already starts with http, leave it alone (e.g. for fallback/test data)
-            let finalUrl = record.output_image_url;
-            if (!finalUrl.startsWith("http")) {
-                const { data: publicUrlData } = supabase.storage.from("outputs").getPublicUrl(finalUrl);
-                finalUrl = publicUrlData.publicUrl;
-            }
+        // Map the storage paths to actual secure Signed URLs
+        // Because the 'outputs' bucket is private, getPublicUrl will return 403s.
+        // We must use createSignedUrl for each image.
+        const mappedData = await Promise.all(
+            (data as GalleryImageRecord[]).map(async (record) => {
+                let finalUrl = record.output_image_url;
+                if (!finalUrl.startsWith("http")) {
+                    // Create a signed URL valid for 1 hour (3600 seconds)
+                    const { data: signedData } = await supabase.storage
+                        .from("outputs")
+                        .createSignedUrl(finalUrl, 3600);
 
-            return {
-                ...record,
-                output_image_url: finalUrl,
-            };
-        });
+                    if (signedData?.signedUrl) {
+                        finalUrl = signedData.signedUrl;
+                    }
+                }
+
+                return {
+                    ...record,
+                    output_image_url: finalUrl,
+                };
+            })
+        );
 
         return { data: mappedData, error: null };
     } catch (e: any) {
