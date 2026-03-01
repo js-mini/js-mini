@@ -528,7 +528,6 @@ export default function StudioClient({ prompts }: Props) {
                 name="image"
                 type="file"
                 accept="image/*"
-                capture="environment"
                 onChange={handleFileChange}
                 className="hidden"
             />
