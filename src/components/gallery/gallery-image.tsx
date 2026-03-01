@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Copy, Check, Expand, X } from "lucide-react";
+import { Copy, Check, Expand, X, Download, Share2 } from "lucide-react";
 import type { GalleryImageRecord } from "@/lib/gallery/actions";
 
 export function GalleryImage({ image, priority = false }: { image: GalleryImageRecord, priority?: boolean }) {
@@ -77,25 +77,77 @@ export function GalleryImage({ image, priority = false }: { image: GalleryImageR
             {isFullscreen && (
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8"
-                    style={{ backgroundColor: "rgba(0,0,0,0.9)", backdropFilter: "blur(8px)" }}
+                    style={{ backgroundColor: "rgba(0,0,0,0.95)", backdropFilter: "blur(8px)" }}
                     onClick={toggleFullscreen}
                 >
-                    <button
-                        className="absolute top-4 right-4 sm:top-8 sm:right-8 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                        onClick={toggleFullscreen}
-                    >
-                        <X size={20} color="#fff" />
-                    </button>
-                    <div className="relative w-full h-[85vh]">
+                    {/* Action Bar */}
+                    <div className="absolute top-4 right-4 sm:top-8 sm:right-8 flex items-center gap-3 z-[110]">
+                        <button
+                            type="button"
+                            onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                    if (navigator.share) {
+                                        await navigator.share({
+                                            title: "JewelShot Görseli",
+                                            text: "JewelShot ile oluşturduğum tasarıma göz atın!",
+                                            url: image.output_image_url
+                                        });
+                                    } else {
+                                        // Fallback to copy link
+                                        await navigator.clipboard.writeText(image.output_image_url);
+                                        alert("Bağlantı kopyalandı!");
+                                    }
+                                } catch (err) {
+                                    console.error("Paylaşım hatası:", err);
+                                }
+                            }}
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors drop-shadow-md"
+                            title="Paylaş"
+                        >
+                            <Share2 size={18} color="#fff" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                    const res = await fetch(image.output_image_url);
+                                    const blob = await res.blob();
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement("a");
+                                    a.href = url;
+                                    a.download = `jewelshot_${image.id}.png`;
+                                    a.click();
+                                    URL.revokeObjectURL(url);
+                                } catch (err) {
+                                    console.error("İndirme hatası:", err);
+                                }
+                            }}
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors drop-shadow-md"
+                            title="İndir"
+                        >
+                            <Download size={18} color="#fff" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
+                            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-500/80 transition-colors drop-shadow-md"
+                            title="Kapat"
+                        >
+                            <X size={20} color="#fff" />
+                        </button>
+                    </div>
+
+                    <div className="relative w-full h-[85vh] flex items-center justify-center pointer-events-none">
                         <Image
                             src={image.output_image_url}
                             alt="Tam Ekran"
                             fill
-                            className="object-contain rounded-lg drop-shadow-2xl"
+                            className="object-contain rounded-lg drop-shadow-2xl pointer-events-auto"
                             onClick={(e) => e.stopPropagation()}
                         />
                     </div>
-
                 </div>
             )}
         </>

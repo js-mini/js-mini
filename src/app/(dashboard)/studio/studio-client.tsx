@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { X, Image as ImageIcon, Sparkles, Loader2, Download, Settings, Camera, Link2, Lock, Zap } from "lucide-react";
+import { X, Image as ImageIcon, Sparkles, Loader2, Download, Settings, Camera, Link2, Lock, Zap, Share2 } from "lucide-react";
 import { generateAction, type GenerateResult } from "@/lib/studio/actions";
 import { RightSidebarPortal } from "@/components/layout/right-sidebar";
 
@@ -818,6 +818,30 @@ export default function StudioClient({ prompts }: Props) {
                                             <button
                                                 type="button"
                                                 onClick={async () => {
+                                                    try {
+                                                        if (navigator.share) {
+                                                            await navigator.share({
+                                                                title: "JewelShot Görseli",
+                                                                text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
+                                                                url: result.outputUrl!
+                                                            });
+                                                        } else {
+                                                            await navigator.clipboard.writeText(result.outputUrl!);
+                                                            alert("Bağlantı kopyalandı!");
+                                                        }
+                                                    } catch (err) {
+                                                        console.error("Paylaşım hatası:", err);
+                                                    }
+                                                }}
+                                                className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
+                                                style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
+                                                title="Paylaş"
+                                            >
+                                                <Share2 size={13} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
                                                     const res = await fetch(result.outputUrl!);
                                                     const blob = await res.blob();
                                                     const a = document.createElement("a");
@@ -1002,6 +1026,30 @@ export default function StudioClient({ prompts }: Props) {
                                                 <button
                                                     type="button"
                                                     onClick={async () => {
+                                                        try {
+                                                            if (navigator.share) {
+                                                                await navigator.share({
+                                                                    title: "JewelShot Görseli",
+                                                                    text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
+                                                                    url: result.outputUrl!
+                                                                });
+                                                            } else {
+                                                                await navigator.clipboard.writeText(result.outputUrl!);
+                                                                alert("Bağlantı kopyalandı!");
+                                                            }
+                                                        } catch (err) {
+                                                            console.error("Paylaşım hatası:", err);
+                                                        }
+                                                    }}
+                                                    className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
+                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
+                                                    title="Paylaş"
+                                                >
+                                                    <Share2 size={13} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={async () => {
                                                         const res = await fetch(result.outputUrl!);
                                                         const blob = await res.blob();
                                                         const a = document.createElement("a");
@@ -1136,6 +1184,30 @@ export default function StudioClient({ prompts }: Props) {
                                                 <button
                                                     type="button"
                                                     onClick={async () => {
+                                                        try {
+                                                            if (navigator.share) {
+                                                                await navigator.share({
+                                                                    title: "JewelShot Görseli",
+                                                                    text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
+                                                                    url: result.outputUrl!
+                                                                });
+                                                            } else {
+                                                                await navigator.clipboard.writeText(result.outputUrl!);
+                                                                alert("Bağlantı kopyalandı!");
+                                                            }
+                                                        } catch (err) {
+                                                            console.error("Paylaşım hatası:", err);
+                                                        }
+                                                    }}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
+                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
+                                                    title="Paylaş"
+                                                >
+                                                    <Share2 size={14} />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={async () => {
                                                         const res = await fetch(result.outputUrl!);
                                                         const blob = await res.blob();
                                                         const a = document.createElement("a");
@@ -1267,6 +1339,30 @@ export default function StudioClient({ prompts }: Props) {
                                                 style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}
                                             />
                                             <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    type="button"
+                                                    onClick={async () => {
+                                                        try {
+                                                            if (navigator.share) {
+                                                                await navigator.share({
+                                                                    title: "JewelShot Görseli",
+                                                                    text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
+                                                                    url: result.outputUrl!
+                                                                });
+                                                            } else {
+                                                                await navigator.clipboard.writeText(result.outputUrl!);
+                                                                alert("Bağlantı kopyalandı!");
+                                                            }
+                                                        } catch (err) {
+                                                            console.error("Paylaşım hatası:", err);
+                                                        }
+                                                    }}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
+                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
+                                                    title="Paylaş"
+                                                >
+                                                    <Share2 size={14} />
+                                                </button>
                                                 <button
                                                     type="button"
                                                     onClick={async () => {
