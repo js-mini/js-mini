@@ -357,7 +357,7 @@ export default function StudioClient({ prompts }: Props) {
                         type="button"
                         onClick={handleSubmit}
                         disabled={isPending || !selectedPrompt || (category === "yuzuk" ? !file : category === "kolye" ? !necklaceFiles.genel : true)}
-                        className="btn-primary flex items-center justify-center gap-2"
+                        className="btn-primary flex items-center justify-center gap-2 w-full"
                     >
                         {isPending ? (
                             <>
@@ -374,15 +374,28 @@ export default function StudioClient({ prompts }: Props) {
                 </div>
             </RightSidebarPortal>
 
-            {/* Settings Modal */}
+            {/* Mobile Settings Button (FAB) */}
+            <div className="md:hidden fixed bottom-6 right-6 z-40">
+                <button
+                    type="button"
+                    onClick={() => setShowSettings(true)}
+                    className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg transition-transform active:scale-95"
+                    style={{ backgroundColor: "var(--bg-primary)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                    aria-label="Ayarlar"
+                >
+                    <Settings size={20} />
+                </button>
+            </div>
+
+            {/* Settings Modal - Extracted from Portal so it renders on Mobile */}
             {showSettings && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0"
                     style={{ backgroundColor: "var(--bg-overlay)" }}
                     onClick={() => setShowSettings(false)}
                 >
                     <div
-                        className="w-full max-w-sm flex flex-col"
+                        className="w-full max-w-sm flex flex-col max-h-[90dvh] overflow-hidden"
                         style={{
                             borderRadius: "var(--radius-lg)",
                             backgroundColor: "var(--bg-primary)",
@@ -393,7 +406,7 @@ export default function StudioClient({ prompts }: Props) {
                     >
                         {/* Modal header */}
                         <div
-                            className="flex items-center justify-between px-5"
+                            className="flex items-center justify-between px-5 shrink-0"
                             style={{ height: 48, borderBottom: "1px solid var(--border)" }}
                         >
                             <span className="text-[14px] font-medium" style={{ color: "var(--text-primary)" }}>
@@ -402,7 +415,7 @@ export default function StudioClient({ prompts }: Props) {
                             <button
                                 type="button"
                                 onClick={() => setShowSettings(false)}
-                                className="w-7 h-7 flex items-center justify-center cursor-pointer transition-opacity hover:opacity-70"
+                                className="w-7 h-7 flex items-center justify-center cursor-pointer transition-opacity hover:opacity-70 rounded-md hover:bg-[var(--bg-secondary)]"
                                 style={{ color: "var(--text-tertiary)" }}
                             >
                                 <X size={16} />
@@ -410,17 +423,17 @@ export default function StudioClient({ prompts }: Props) {
                         </div>
 
                         {/* Modal body */}
-                        <div className="px-5 py-4 flex flex-col gap-5">
+                        <div className="px-5 py-4 flex flex-col gap-6 overflow-y-auto no-scrollbar">
                             {/* Engraving — only for rings */}
                             {category === "yuzuk" && (
-                                <div className="flex flex-col gap-1.5">
-                                    <span className="text-[11px] uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>Yazı</span>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--text-tertiary)" }}>Yazı</span>
                                     <input
                                         type="text"
                                         value={engravingText}
                                         onChange={(e) => setEngravingText(e.target.value)}
                                         placeholder="Yüzük içi metin (opsiyonel)"
-                                        className="w-full px-2.5 py-1.5 text-[13px] outline-none"
+                                        className="w-full px-3 py-2 text-[13px] outline-none transition-colors focus:ring-1 focus:ring-[var(--text-primary)]"
                                         style={{
                                             borderRadius: "var(--radius-md)",
                                             backgroundColor: "var(--bg-secondary)",
@@ -438,11 +451,11 @@ export default function StudioClient({ prompts }: Props) {
                             )}
 
                             {/* Metal Color */}
-                            <div className="flex flex-col gap-1.5">
-                                <span className="text-[11px] uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>Metal Rengi</span>
-                                <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-col gap-2">
+                                <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--text-tertiary)" }}>Metal Rengi</span>
+                                <div className="flex flex-wrap gap-1.5">
                                     {METAL_COLORS.map((mc) => (
-                                        <Chip key={mc.value} label={mc.label} active={metalColor === mc.value} onClick={() => setMetalColor(mc.value)} />
+                                        <Chip key={mc.value} label={mc.label.split("(")[0].trim()} active={metalColor === mc.value} onClick={() => setMetalColor(mc.value)} />
                                     ))}
                                 </div>
                             </div>
