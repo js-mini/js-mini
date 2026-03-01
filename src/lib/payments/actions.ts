@@ -6,18 +6,26 @@ import { redirect } from "next/navigation";
 // Map our internal package IDs to Creem.io Product IDs or define price params
 // Note: This requires real Creem Product IDs to function properly in production.
 const PACKAGE_MAP: Record<string, { amount: number, credits: number, name: string }> = {
-    starter: { amount: 9900, credits: 50, name: "Başlangıç (50 Kredi)" }, // amount in kuruş (99.00 ₺)
-    pro: { amount: 24900, credits: 150, name: "Profesyonel (150 Kredi)" },
-    premium: { amount: 49900, credits: 400, name: "Kurumsal (400 Kredi)" },
+    pro: { amount: 7500, credits: 25, name: "Pro (25 Kredi)" }, // amount in kuruş/cents
+    studio: { amount: 12500, credits: 50, name: "Studio (50 Kredi)" },
+    founder: { amount: 14900, credits: 100, name: "Founder (100 Kredi)" },
 };
 
 import { Creem } from 'creem';
 
 export async function createCheckoutAction(formData: FormData) {
     const packageId = formData.get("packageId") as string;
+    const inviteCode = formData.get("inviteCode") as string;
 
     if (!packageId || !PACKAGE_MAP[packageId]) {
         return redirect("/plans?error=invalid_package");
+    }
+
+    if (packageId === "founder") {
+        // Strict invite code check. The valid invite code is JSFOUNDER25
+        if (!inviteCode || inviteCode.trim().toUpperCase() !== "JSFOUNDER25") {
+            return redirect("/plans?error=invalid_invite_code");
+        }
     }
 
     const supabase = await createClient();

@@ -44,7 +44,7 @@ const PLANS = [
     {
         id: "founder",
         name: "Founder",
-        badge: "25 kişi",
+        badge: "Sadece 25 Kişi",
         description: "Sürekli üretim yapan büyük markalar ve ajanslar için.",
         price: "149$",
         billingSuffix: "/ay",
@@ -59,11 +59,11 @@ const PLANS = [
             "Öncelikli Destek"
         ],
         icon: Gem,
-        popular: true, // Founder is the highlighted one
+        popular: true,
     }
 ];
 
-export default async function PlansPage() {
+export default async function PlansPage({ searchParams }: { searchParams: { error?: string } }) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -84,6 +84,16 @@ export default async function PlansPage() {
                     <h1 className="text-4xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
                         Kredi Paketleri
                     </h1>
+                    {searchParams?.error === "invalid_invite_code" && (
+                        <div className="mb-4 p-4 rounded-xl font-medium text-sm border-l-4" style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "#ef4444", borderColor: "#ef4444" }}>
+                            Girdiğiniz davetiye kodu geçersiz. Founder paketi yalnızca sınırlı davetlilere açıktır.
+                        </div>
+                    )}
+                    {searchParams?.error === "invalid_package" && (
+                        <div className="mb-4 p-4 rounded-xl font-medium text-sm border-l-4" style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "#ef4444", borderColor: "#ef4444" }}>
+                            Seçilen paket geçersiz, lütfen sayfayı yenileyip tekrar deneyin.
+                        </div>
+                    )}
                     <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
                         Jewelshot® ile kusursuz profesyonel takı fotoğrafları üretmek için ihtiyacınız olan paketi seçin.
                     </p>
@@ -107,8 +117,8 @@ export default async function PlansPage() {
                                 }}
                             >
                                 {plan.popular && (
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[var(--text-primary)] text-[var(--bg-primary)] text-xs font-bold uppercase tracking-wider rounded-full">
-                                        En Çok Tercih Edilen
+                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[var(--text-primary)] text-[var(--bg-primary)] text-xs font-bold uppercase tracking-wider rounded-full whitespace-nowrap">
+                                        ÖZEL DAVETİYE ALANI
                                     </div>
                                 )}
 
@@ -118,9 +128,8 @@ export default async function PlansPage() {
                                     </div>
                                     <h3 className="text-2xl font-bold mb-2 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
                                         {plan.name}
-                                        {plan.name === "Founder" && <span className="text-amber-500">⭐</span>}
                                         {plan.badge && (
-                                            <span className="text-xs px-2 py-0.5 rounded-full font-normal italic" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)", border: "1px solid var(--border)" }}>
+                                            <span className="text-xs px-2 py-0.5 rounded-full font-semibold uppercase tracking-widest" style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-tertiary)", border: "1px solid var(--border)" }}>
                                                 {plan.badge}
                                             </span>
                                         )}
@@ -157,8 +166,20 @@ export default async function PlansPage() {
                                     ))}
                                 </ul>
 
-                                <form action={createCheckoutAction}>
+                                <form action={createCheckoutAction} className="flex flex-col gap-3">
                                     <input type="hidden" name="packageId" value={plan.id} />
+
+                                    {plan.id === "founder" && (
+                                        <input
+                                            type="text"
+                                            name="inviteCode"
+                                            placeholder="Davetiye Kodu"
+                                            required
+                                            className="w-full px-4 py-3 rounded-xl text-sm transition-all text-center uppercase tracking-widest font-semibold placeholder:normal-case placeholder:tracking-normal placeholder:font-normal"
+                                            style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
+                                        />
+                                    )}
+
                                     <button
                                         type="submit"
                                         className={`w-full py-4 rounded-xl text-sm font-semibold transition-colors flex justify-center items-center gap-2`}
@@ -168,7 +189,7 @@ export default async function PlansPage() {
                                                 : { backgroundColor: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border)" }
                                         }
                                     >
-                                        Satın Al
+                                        {plan.id === "founder" ? "Davetiye ile Katıl" : "Satın Al"}
                                     </button>
                                 </form>
                             </div>
