@@ -39,7 +39,7 @@ export async function HeroSection() {
                 </h1>
 
                 <p className="text-lg text-zinc-400 max-w-2xl mx-auto mb-10 leading-normal font-normal">
-                    Telefonunuzla çektiğiniz amatör mücevher fotoğraflarını, yapay zeka ile
+                    Telefonunuzla çektiğiniz amatör mücevher fotoğraflarını, <strong>Jewelshot®</strong> ile
                     saniyeler içinde stüdyo kalitesinde e-ticaret görsellerine dönüştürün.
                 </p>
 
