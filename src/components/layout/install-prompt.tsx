@@ -8,6 +8,14 @@ export function InstallPrompt() {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
     useEffect(() => {
+        // 1. Manually register the Service Worker to fulfill PWA requirements
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then((reg) => console.log('Service Worker registered', reg.scope))
+                .catch((err) => console.error('Service Worker registration failed', err));
+        }
+
+        // 2. Listen for the install prompt event
         const handleBeforeInstallPrompt = (e: Event) => {
             // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();

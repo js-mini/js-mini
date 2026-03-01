@@ -21,12 +21,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-import withPWAInit from "next-pwa";
 
-const withPWA = withPWAInit({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-});
-
-// @ts-expect-error PWA types conflict with recent Next.js versions
-export default withPWA(nextConfig);
+export default nextConfig;
