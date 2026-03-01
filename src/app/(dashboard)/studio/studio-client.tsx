@@ -821,8 +821,8 @@ export default function StudioClient({ prompts }: Props) {
                                                     try {
                                                         if (navigator.share) {
                                                             await navigator.share({
-                                                                title: "JewelShot Görseli",
-                                                                text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
+                                                                title: "Jewelshot® Görseli",
+                                                                text: "Jewelshot® Stüdyo ile oluşturduğum tasarıma göz atın!",
                                                                 url: result.outputUrl!
                                                             });
                                                         } else {

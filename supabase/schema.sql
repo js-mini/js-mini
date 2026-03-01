@@ -1,5 +1,5 @@
 -- ============================================
--- JewelShot — Database Schema
+-- Jewelshot® — Database Schema
 -- Run this in Supabase SQL Editor
 -- ============================================
 

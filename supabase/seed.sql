@@ -1,5 +1,5 @@
 -- ============================================
--- JewelShot — Seed Data
+-- Jewelshot® — Seed Data
 -- Run this in Supabase SQL Editor
 -- ============================================
 

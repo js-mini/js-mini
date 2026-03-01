@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
                 <div className="flex justify-center mb-8">
                     <Image
                         src="/logo.png"
-                        alt="Jewelshot"
+                        alt="Jewelshot®"
                         width={48}
                         height={48}
                         className="rounded-lg"

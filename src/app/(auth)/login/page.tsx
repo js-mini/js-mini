@@ -19,7 +19,7 @@ export default function LoginPage() {
                 Giriş Yap
             </h1>
             <p className="text-[13px] text-center mb-8" style={{ color: "var(--text-tertiary)" }}>
-                Jewelshot hesabınıza giriş yapın
+                Jewelshot® hesabınıza giriş yapın
             </p>
 
             <form action={formAction} className="flex flex-col gap-3">

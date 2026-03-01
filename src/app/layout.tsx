@@ -8,14 +8,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "JewelShot — AI Jewelry Photography",
+  title: "Jewelshot® — AI Jewelry Photography",
   description:
     "Mücevher fotoğraflarınızı yapay zeka ile profesyonel e-ticaret görsellerine dönüştürün.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "JewelShot",
+    title: "Jewelshot®",
   },
   themeColor: "#f3b820",
   viewport: "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",

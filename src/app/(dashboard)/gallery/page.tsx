@@ -2,7 +2,7 @@ import { getRecentGenerations } from "@/lib/gallery/actions";
 import { MasonryGrid } from "@/components/gallery/masonry-grid";
 
 export const metadata = {
-    title: "Galeri - JewelShot",
+    title: "Galeri - Jewelshot®",
     description: "Geçmiş üretimlerinizi görüntüleyin.",
 };
 

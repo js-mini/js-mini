@@ -19,7 +19,7 @@ export default function RegisterPage() {
                 Kayıt Ol
             </h1>
             <p className="text-[13px] text-center mb-8" style={{ color: "var(--text-tertiary)" }}>
-                Yeni bir Jewelshot hesabı oluşturun
+                Yeni bir Jewelshot® hesabı oluşturun
             </p>
 
             <form action={formAction} className="flex flex-col gap-3">

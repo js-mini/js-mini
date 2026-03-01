@@ -34,9 +34,9 @@ export function Sidebar({ userName }: Props) {
                 className="flex items-center gap-2 px-4 shrink-0"
                 style={{ height: 48, borderBottom: "1px solid var(--border)" }}
             >
-                <Image src="/logo.png" alt="Jewelshot" width={32} height={32} className="rounded" />
+                <Image src="/logo.png" alt="Jewelshot®" width={32} height={32} className="rounded" />
                 <span className="text-base font-semibold" style={{ color: "var(--text-primary)" }}>
-                    Jewelshot&reg;
+                    Jewelshot®
                 </span>
             </div>
 

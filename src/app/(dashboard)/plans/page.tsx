@@ -75,7 +75,7 @@ export default async function PlansPage() {
                         Kredi Paketleri
                     </h1>
                     <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
-                        JewelShot ile kusursuz profesyonel takı fotoğrafları üretmek için ihtiyacınız olan paketi seçin.
+                        Jewelshot® ile kusursuz profesyonel takı fotoğrafları üretmek için ihtiyacınız olan paketi seçin.
                     </p>
                     <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
                         <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Mevcut Krediniz:</span>

@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className="flex justify-center mb-6">
           <Image
             src="/logo.png"
-            alt="Jewelshot"
+            alt="Jewelshot®"
             width={64}
             height={64}
             className="rounded-lg"
@@ -18,7 +18,7 @@ export default function HomePage() {
           />
         </div>
         <h1 className="text-xl font-semibold mb-2 tracking-tight" style={{ color: "var(--text-primary)" }}>
-          Jewelshot&reg;
+          Jewelshot®
         </h1>
         <p className="max-w-sm mx-auto" style={{ color: "var(--text-secondary)" }}>
           Mücevher fotoğraflarınızı Jewelshot® ile profesyonel{" "}
