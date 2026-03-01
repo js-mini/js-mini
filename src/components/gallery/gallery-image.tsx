@@ -37,7 +37,7 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                 {/* Image */}
                 <Image
                     src={image.output_image_url}
-                    alt={image.prompt_text || "Oluşturulan Görsel"}
+                    alt={image.output_image_url.split('/').pop()?.split('?')[0] || "Oluşturulan Görsel"}
                     width={400}
                     height={400}
                     className="w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
