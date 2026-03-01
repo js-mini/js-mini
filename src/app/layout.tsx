@@ -17,8 +17,14 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Jewelshot®",
   },
+};
+
+export const viewport = {
   themeColor: "#D4AF37",
-  viewport: "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+  viewportFit: "cover",
 };
 
 import { InstallPrompt } from "@/components/layout/install-prompt";

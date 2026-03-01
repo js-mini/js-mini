@@ -28,4 +28,5 @@ const withPWA = withPWAInit({
   disable: process.env.NODE_ENV === "development",
 });
 
+// @ts-expect-error PWA types conflict with recent Next.js versions
 export default withPWA(nextConfig);
