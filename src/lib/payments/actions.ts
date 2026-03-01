@@ -64,15 +64,20 @@ export async function createCheckoutAction(formData: FormData) {
         const session = await response.json();
 
         // Redirect to Creem.io hosted checkout page
-        if (session && session.url) {
+        if (session && session.checkout_url) {
+            return redirect(session.checkout_url);
+        } else if (session && session.url) {
             return redirect(session.url);
         } else {
             console.error("Creem session creation failed, no URL returned:", session);
-            return redirect("/plans?error=checkout_failed");
+            // encode the session response to see what we actually got
+            const errDetails = encodeURIComponent(JSON.stringify(session).slice(0, 100));
+            return redirect(`/plans?error=no_url&details=${errDetails}`);
         }
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error creating checkout session:", error);
-        return redirect("/plans?error=checkout_error");
+        const errMsg = encodeURIComponent(error?.message || "unknown");
+        return redirect(`/plans?error=checkout_error&msg=${errMsg}`);
     }
 }
