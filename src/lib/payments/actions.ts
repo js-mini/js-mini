@@ -60,7 +60,8 @@ export async function createCheckoutAction(formData: FormData) {
         if (!response.ok) {
             const errorText = await response.text();
             console.error("Creem session creation failed:", errorText);
-            redirectUrl = "/plans?error=checkout_failed";
+            const errDetails = encodeURIComponent(errorText.slice(0, 150));
+            redirectUrl = `/plans?error=checkout_failed&details=${errDetails}`;
         } else {
             const session = await response.json();
 
