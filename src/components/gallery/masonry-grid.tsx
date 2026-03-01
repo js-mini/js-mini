@@ -33,15 +33,12 @@ export function MasonryGrid({ images }: { images: GalleryImageRecord[] }) {
         );
     }
 
-    // Split images into columns based on screen size (CSS handles this, but column grouping in React is cleaner for Masonry)
-    // For true Masonry in React without a heavy library, we break the array into columns arrays.
-
-    // We'll use a responsive CSS column approach instead of JS arrays to prevent hydration mismatches
+    // Using a uniform CSS Grid instead of Masonry for a more organized, systematic look
     return (
         <div className="w-full h-full p-4 sm:p-6 md:p-8 overflow-y-auto no-scrollbar">
-            <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 gap-4 space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
                 {images.map((img) => (
-                    <div key={img.id} className="break-inside-avoid">
+                    <div key={img.id} className="relative aspect-square w-full h-full">
                         <GalleryImage image={img} />
                     </div>
                 ))}

@@ -24,7 +24,7 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
     return (
         <>
             <div
-                className="relative w-full overflow-hidden group mb-4 cursor-pointer"
+                className="relative w-full h-full overflow-hidden group cursor-pointer"
                 style={{
                     borderRadius: "var(--radius-md)",
                     backgroundColor: "var(--bg-secondary)",
@@ -38,10 +38,9 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                 <Image
                     src={image.output_image_url}
                     alt={image.output_image_url.split('/').pop()?.split('?')[0] || "Oluşturulan Görsel"}
-                    width={400}
-                    height={400}
-                    className="w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                    style={{ aspectRatio: "auto" }}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
 
                 {/* Hover Overlay */}
