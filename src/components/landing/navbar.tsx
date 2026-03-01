@@ -8,12 +8,12 @@ export async function LandingNavbar() {
     const { data: { user } } = await supabase.auth.getUser();
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-md bg-black/50 border-b border-white/5">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-20">
+        <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-md bg-black/60 border-b border-zinc-900">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 group">
-                        <div className="relative w-10 h-10 overflow-hidden rounded-xl transition-transform group-hover:scale-105">
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="relative w-7 h-7 overflow-hidden rounded-md transition-transform group-hover:scale-[1.02]">
                             <Image
                                 src="/logo.png"
                                 alt="Jewelshot®"
@@ -21,8 +21,8 @@ export async function LandingNavbar() {
                                 className="object-cover"
                             />
                         </div>
-                        <span className="text-xl font-bold tracking-tight text-white">
-                            Jewelshot<sup className="text-[10px] text-zinc-500">®</sup>
+                        <span className="text-[17px] font-bold tracking-tight text-white flex items-end">
+                            Jewelshot<sup className="text-[9px] text-zinc-500 mb-1 ml-[1px]">®</sup>
                         </span>
                     </Link>
 
@@ -30,15 +30,15 @@ export async function LandingNavbar() {
                     <div className="flex items-center gap-4">
                         {user ? (
                             <Link href="/studio">
-                                <Button variant="primary">Stüdyoya Git</Button>
+                                <Button variant="outline" size="sm">Stüdyoya Git</Button>
                             </Link>
                         ) : (
                             <>
-                                <Link href="/login" className="hidden sm:block">
-                                    <Button variant="ghost">Giriş Yap</Button>
+                                <Link href="/login" className="hidden sm:block text-sm text-zinc-400 hover:text-zinc-100 transition-colors">
+                                    Giriş Yap
                                 </Link>
                                 <Link href="/register">
-                                    <Button variant="primary">Ücretsiz Başla</Button>
+                                    <Button variant="primary" size="sm">Ücretsiz Başla</Button>
                                 </Link>
                             </>
                         )}

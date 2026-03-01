@@ -13,7 +13,7 @@ const IMAGES = [
 
 export function ShowcaseImages() {
     return (
-        <section className="py-10 pb-32 overflow-hidden relative">
+        <section className="py-16 pb-32 overflow-hidden relative bg-black">
             {/* Edge gradient masks to blend with the dark background */}
             <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
@@ -23,21 +23,21 @@ export function ShowcaseImages() {
                 {[...IMAGES, ...IMAGES].map((src, index) => (
                     <div
                         key={index}
-                        className="relative w-[200px] h-[260px] md:w-[280px] md:h-[360px] rounded-2xl overflow-hidden shrink-0 border border-white/5 bg-zinc-900 group"
+                        className="relative w-[200px] h-[260px] md:w-[280px] md:h-[360px] rounded-xl overflow-hidden shrink-0 border border-zinc-800 bg-zinc-900 group"
                     >
                         <Image
                             src={src}
                             alt="Jewelshot® processed jewelry"
                             fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
                             sizes="(max-width: 768px) 200px, 280px"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         <div className="absolute bottom-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-                            <span className="px-2 py-1 bg-black/60 backdrop-blur-md rounded border border-white/10 text-[10px] text-white font-medium uppercase tracking-wider">
+                            <span className="px-2 py-1 bg-black/80 backdrop-blur-md rounded border border-zinc-700 text-[10px] text-zinc-300 font-medium uppercase tracking-wider">
                                 Önce
                             </span>
-                            <span className="px-2 py-1 bg-[#D4AF37] rounded text-[10px] text-black font-semibold uppercase tracking-wider shadow-[0_0_10px_rgba(212,175,55,0.5)]">
+                            <span className="px-2 py-1 bg-white rounded border border-transparent text-[10px] text-black font-semibold uppercase tracking-wider">
                                 Sonra
                             </span>
                         </div>
