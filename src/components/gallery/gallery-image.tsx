@@ -52,8 +52,14 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                         background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
                     }}
                 >
-                    <div className="flex gap-2">
+                    {/* Filename Display */}
+                    <div className="flex-1 flex items-end">
+                        <span className="text-white text-xs font-medium opacity-90 truncate max-w-[70%] drop-shadow-md">
+                            {image.output_image_url.split('/').pop()?.split('?')[0] || 'resim.png'}
+                        </span>
+                    </div>
 
+                    <div className="flex gap-2 justify-end">
                         <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
