@@ -4,7 +4,7 @@ import { ShowcaseImages } from "@/components/landing/showcase-images";
 
 export default function HomePage() {
   return (
-    <div className="min-h-dvh flex flex-col bg-[#0a0a0a] overflow-x-hidden selection:bg-[#D4AF37] selection:text-black">
+    <div className="min-h-dvh flex flex-col bg-[#0a0a0a] overflow-x-hidden selection:bg-[#f3b820] selection:text-black">
       <LandingNavbar />
 
       <main className="flex-1 flex flex-col">

@@ -22,7 +22,7 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
                 break
             case "glass":
                 // A special premium version using the gold brand color
-                variantStyles = "bg-[#D4AF37] text-black hover:bg-[#B5952F] border border-[#D4AF37]/50 shadow-[0_0_15px_rgba(212,175,55,0.15)]"
+                variantStyles = "bg-[#f3b820] text-black hover:bg-[#d9a21b] border border-[#f3b820]/50 shadow-[0_0_15px_rgba(243,184,32,0.15)]"
                 break
         }
 

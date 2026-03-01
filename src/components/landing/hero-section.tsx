@@ -20,13 +20,13 @@ export async function HeroSection() {
             />
 
             {/* Subtle top glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[#D4AF37]/5 blur-[120px] rounded-[100%] pointer-events-none z-0" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-[#f3b820]/5 blur-[120px] rounded-[100%] pointer-events-none z-0" />
 
             <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
 
                 {/* Pill announcement */}
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/50 border border-zinc-800 text-zinc-300 text-[13px] mb-8 hover:bg-zinc-800 transition-colors backdrop-blur-md cursor-pointer">
-                    <Sparkles size={14} className="text-[#D4AF37]" />
+                    <Sparkles size={14} className="text-[#f3b820]" />
                     <span>Yeni: Bileklik ve Küpe Desteği Eklendi</span>
                     <ArrowRight size={14} className="ml-1 text-zinc-500" />
                 </div>
