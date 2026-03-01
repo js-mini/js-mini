@@ -691,69 +691,48 @@ export default function StudioClient({ prompts }: Props) {
                                             }}
                                         />
                                         {slotData ? (
-                                            { headerPortalElement && createPortal(
-                                                <div className="flex bg-[var(--hover)] p-1 rounded-lg">
-                                                    {CATEGORIES.map((cat) => (
-                                                        <button
-                                                            key={cat.value}
-                                                            onClick={() => {
-                                                                setCategory(cat.value);
-                                                                setPromptId(undefined);
-                                                                setFile(null);
-                                                                setNecklaceFiles({ kilavuz: null, genel: null, uc: null, zincir: null, kilit: null });
-                                                            }}
-                                                            className={`px-3 py-1.5 md:px-5 md:py-1.5 rounded-md text-xs md:text-sm font-medium transition-colors whitespace-nowrap ${category === cat.value
-                                                                ? "bg-[var(--bg-primary)] text-[var(--text-primary)] shadow-sm"
-                                                                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                                                                }`}
-                                                        >
-                                                            {cat.label}
-                                                        </button>
-                                                    ))}
-                                                </div>,
-                                                headerPortalElement
-                                            )}                                            <div className="relative group w-full">
-                                            <img
-                                                src={slotData.preview}
-                                                alt={slot.label}
-                                                className="w-full object-cover"
+                                            <div className="relative group w-full">
+                                                <img
+                                                    src={slotData.preview}
+                                                    alt={slot.label}
+                                                    className="w-full object-cover"
+                                                    style={{
+                                                        aspectRatio: "1/1",
+                                                        borderRadius: "var(--radius-md)",
+                                                        border: "1px solid var(--border)",
+                                                    }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => clearNecklaceSlot(slot.key)}
+                                                    className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md"
+                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div
+                                                onClick={() => necklaceFileRefs.current[slot.key]?.click()}
+                                                onDragOver={(e) => { e.preventDefault(); }}
+                                                onDrop={(e) => {
+                                                    e.preventDefault();
+                                                    const f = e.dataTransfer.files[0];
+                                                    if (f) handleNecklaceFile(slot.key, f);
+                                                }}
+                                                className="w-full cursor-pointer flex flex-col items-center justify-center gap-2 transition-colors hover:border-[var(--text-tertiary)]"
                                                 style={{
                                                     aspectRatio: "1/1",
                                                     borderRadius: "var(--radius-md)",
-                                                    border: "1px solid var(--border)",
+                                                    border: "2px dashed var(--border)",
+                                                    backgroundColor: "var(--bg-secondary)",
                                                 }}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => clearNecklaceSlot(slot.key)}
-                                                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md"
-                                                style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
                                             >
-                                                <X size={12} />
-                                            </button>
-                                        </div>
-                                        ) : (
-                                        <div
-                                            onClick={() => necklaceFileRefs.current[slot.key]?.click()}
-                                            onDragOver={(e) => { e.preventDefault(); }}
-                                            onDrop={(e) => {
-                                                e.preventDefault();
-                                                const f = e.dataTransfer.files[0];
-                                                if (f) handleNecklaceFile(slot.key, f);
-                                            }}
-                                            className="w-full cursor-pointer flex flex-col items-center justify-center gap-2 transition-colors hover:border-[var(--text-tertiary)]"
-                                            style={{
-                                                aspectRatio: "1/1",
-                                                borderRadius: "var(--radius-md)",
-                                                border: "2px dashed var(--border)",
-                                                backgroundColor: "var(--bg-secondary)",
-                                            }}
-                                        >
-                                            <SlotIcon size={20} style={{ color: "var(--text-tertiary)" }} />
-                                            <span className="text-[10px] text-center px-1" style={{ color: "var(--text-tertiary)" }}>
-                                                {slot.description}
-                                            </span>
-                                        </div>
+                                                <SlotIcon size={20} style={{ color: "var(--text-tertiary)" }} />
+                                                <span className="text-[10px] text-center px-1" style={{ color: "var(--text-tertiary)" }}>
+                                                    {slot.description}
+                                                </span>
+                                            </div>
                                         )}
                                     </div>
                                 );
