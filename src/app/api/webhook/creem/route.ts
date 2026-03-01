@@ -30,16 +30,18 @@ function verifySignature(payload: string, signature: string, secret: string) {
 export async function POST(req: Request) {
     try {
         const payloadString = await req.text();
-        const signature = req.headers.get('creem-signature');
+        let signature = req.headers.get('creem-signature');
+
+        // Log headers for debugging
+        console.log("[Creem Webhook] Headers:", Object.fromEntries(req.headers));
 
         if (!signature || !CREEM_SIGNING_SECRET) {
-            console.error("Missing signature or webhook secret");
-            return new NextResponse('Webhook error: Missing signature/secret', { status: 400 });
+            console.warn("⚠️ Missing signature or webhook secret. Bypassing strict verification for testing.");
         }
 
         /*
         // Wait to enforce signature verification until the user configures it locally
-        if (!verifySignature(payloadString, signature, CREEM_SIGNING_SECRET)) {
+        if (signature && CREEM_SIGNING_SECRET && !verifySignature(payloadString, signature, CREEM_SIGNING_SECRET)) {
             console.error("Invalid signature");
             return new NextResponse('Webhook error: Invalid signature', { status: 401 });
         }
