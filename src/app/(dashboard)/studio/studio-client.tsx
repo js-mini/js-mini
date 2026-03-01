@@ -526,19 +526,6 @@ export default function StudioClient({ prompts }: Props) {
                 </div>
             </RightSidebarPortal>
 
-            {/* Mobile Settings Button (FAB) */}
-            <div className="md:hidden fixed bottom-6 right-6 z-40">
-                <button
-                    type="button"
-                    onClick={() => setShowSettings(true)}
-                    className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg transition-transform active:scale-95"
-                    style={{ backgroundColor: "var(--bg-primary)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
-                    aria-label="Ayarlar"
-                >
-                    <Settings size={20} />
-                </button>
-            </div>
-
             {/* Settings Modal - Extracted from Portal so it renders on Mobile */}
             {showSettings && (
                 <div
