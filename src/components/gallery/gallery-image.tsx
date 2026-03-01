@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Copy, Check, Expand, X } from "lucide-react";
 import type { GalleryImageRecord } from "@/lib/gallery/actions";
 
-export function GalleryImage({ image }: { image: GalleryImageRecord }) {
+export function GalleryImage({ image, priority = false }: { image: GalleryImageRecord, priority?: boolean }) {
     const [isHovered, setIsHovered] = useState(false);
     const [isCopied, setIsCopied] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -41,7 +41,7 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                     className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                    unoptimized={image.output_image_url.startsWith('/api/')}
+                    priority={priority}
                 />
 
                 {/* Hover Overlay */}
@@ -86,12 +86,15 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                     >
                         <X size={20} color="#fff" />
                     </button>
-                    <img
-                        src={image.output_image_url}
-                        alt="Tam Ekran"
-                        className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
-                    />
+                    <div className="relative w-full h-[85vh]">
+                        <Image
+                            src={image.output_image_url}
+                            alt="Tam Ekran"
+                            fill
+                            className="object-contain rounded-lg drop-shadow-2xl"
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </div>
 
                 </div>
             )}
