@@ -60,8 +60,8 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
     // Build final prompt
     let finalPrompt = prompt.template;
 
-    // Hardcode extreme clarity and gemstone preservation
-    const clarityInstruction = "\n\nCRITICAL QUALITY REQUIREMENT: The image must be rendered in flawless 8K ultra-HD macro photography style. All gemstones, diamonds, and colored stones MUST be terrifyingly sharp, crystal clear, and flawlessly defined. Every single facet, facet arrangement, and edge must be perfectly crisp and geometrically distinct. Maximize internal reflections, fire, and brilliance without overexposing. If there are colored gemstones, PRESERVE their exact original color saturation perfectly while maximizing light return and depth. The final render must look like a multi-million-dollar high-end macro advertisement shot on an 85mm macro lens with focus stacking. Zero blur, zero softness on the stones.";
+    // Hardcode extreme clarity and gemstone preservation, with strict instructions NOT to add hallucinated stones.
+    const clarityInstruction = "\n\nCRITICAL QUALITY REQUIREMENT: The image must be rendered in flawless 8K ultra-HD macro photography style. DO NOT ADD OR INVENT ANY NEW GEMSTONES if they do not exist in the original input image. If the original jewelry is plain metal, keep it plain metal. HOWEVER, IF gemstones, diamonds, or colored stones ARE present in the original design, they MUST be terrifyingly sharp, crystal clear, and flawlessly defined. Every single facet, facet arrangement, and edge must be perfectly crisp and geometrically distinct. Maximize internal reflections, fire, and brilliance without overexposing. If there are colored gemstones, PRESERVE their exact original color saturation perfectly while maximizing light return and depth. The final render must look like a multi-million-dollar high-end macro advertisement shot on an 85mm macro lens with focus stacking. Zero blur, zero softness on the stones.";
     finalPrompt += clarityInstruction;
 
     // Handle engraving for rings
