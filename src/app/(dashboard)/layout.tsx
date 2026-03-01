@@ -23,7 +23,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
                 userName={profile?.full_name || user.email?.split("@")[0] || "Kullanıcı"}
             />
             <div className="flex-1 flex flex-col overflow-hidden">
-                <Header credits={profile?.credits ?? 0} />
+                <Header
+                    credits={profile?.credits ?? 0}
+                    userName={profile?.full_name || user.email?.split("@")[0] || "Kullanıcı"}
+                />
                 <main className="flex-1 overflow-hidden">
                     {children}
                 </main>
