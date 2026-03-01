@@ -111,6 +111,27 @@ create policy "Users can read own transactions"
   on public.credit_transactions for select
   using (auth.uid() = user_id);
 
+-- ── Payments ────────────────────────────────
+-- Tracks Creem.io checkout sessions and completed payments.
+
+create table public.payments (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  creem_checkout_id text unique not null,
+  amount numeric not null,
+  currency text not null default 'TRY',
+  credits_purchased integer not null,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.payments enable row level security;
+
+create policy "Users can read own payments"
+  on public.payments for select
+  using (auth.uid() = user_id);
+
 -- ── Indexes ─────────────────────────────────
 
 create index idx_generations_user_id on public.generations(user_id);
@@ -134,4 +155,8 @@ create trigger profiles_updated_at
 
 create trigger prompts_updated_at
   before update on public.prompts
+  for each row execute function public.update_updated_at();
+
+create trigger payments_updated_at
+  before update on public.payments
   for each row execute function public.update_updated_at();
