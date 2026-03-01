@@ -518,8 +518,8 @@ export default function StudioClient({ prompts }: Props) {
                             </>
                         ) : (
                             <>
-                                <Sparkles size={14} />
-                                Oluştur
+                                <Camera size={14} />
+                                Çekimi Başlat
                             </>
                         )}
                     </button>
@@ -1408,8 +1408,8 @@ export default function StudioClient({ prompts }: Props) {
                         </>
                     ) : (
                         <>
-                            <Sparkles size={14} />
-                            Oluştur
+                            <Camera size={14} />
+                            Çekimi Başlat
                         </>
                     )}
                 </button>
