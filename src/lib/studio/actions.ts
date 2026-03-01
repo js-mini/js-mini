@@ -42,7 +42,7 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
         .eq("id", user.id)
         .single();
 
-    const creditCost = resolution === "4K" ? 10 : 5;
+    const creditCost = resolution === "4K" ? 2 : 1;
 
     if (!profile || profile.credits < creditCost) {
         return { error: `Yeterli krediniz yok. Bu işlem için ${creditCost} kredi gereklidir.` };

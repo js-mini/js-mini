@@ -10,7 +10,7 @@ const PLANS = [
         description: "Az kullananlar ve butikler için ideal başlangıç.",
         price: "75$",
         billingSuffix: "/ay",
-        credits: 125, // 25 visuals * 5 credits
+        credits: 25,
         visuals: 25,
         unitPrice: "3.00$",
         features: [
@@ -28,7 +28,7 @@ const PLANS = [
         description: "Düzenli içerik üreten markalar ve tasarımcılar için.",
         price: "125$",
         billingSuffix: "/ay",
-        credits: 250, // 50 visuals * 5 credits
+        credits: 50,
         visuals: 50,
         unitPrice: "2.50$",
         features: [
@@ -48,7 +48,7 @@ const PLANS = [
         description: "Sürekli üretim yapan büyük markalar ve ajanslar için.",
         price: "149$",
         billingSuffix: "/ay",
-        credits: 500, // 100 visuals * 5 credits
+        credits: 100,
         visuals: 100,
         unitPrice: "1.49$",
         features: [
