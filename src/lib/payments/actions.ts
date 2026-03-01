@@ -11,6 +11,8 @@ const PACKAGE_MAP: Record<string, { amount: number, credits: number, name: strin
     premium: { amount: 49900, credits: 400, name: "Kurumsal (400 Kredi)" },
 };
 
+import { Creem } from 'creem';
+
 export async function createCheckoutAction(formData: FormData) {
     const packageId = formData.get("packageId") as string;
 
@@ -26,8 +28,8 @@ export async function createCheckoutAction(formData: FormData) {
     }
 
     // Check if API key is configured
-    if (!process.env.CREEM_API_KEY) {
-        // Fallback for development/demonstration if Creem is not set up
+    const apiKey = process.env.CREEM_API_KEY;
+    if (!apiKey) {
         console.warn("CREEM_API_KEY is missing. In a real app, this redirects to checkout.");
         return redirect("/plans?error=missing_api_key");
     }
@@ -37,50 +39,35 @@ export async function createCheckoutAction(formData: FormData) {
     try {
         const selectedPackage = PACKAGE_MAP[packageId];
 
-        // Example of a basic Creem.io Quick Checkout integration.
-        // It creates a dynamic checkout session for the specific user and amount using REST API.
-        const response = await fetch("https://api.creem.io/v1/checkouts", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-api-key": process.env.CREEM_API_KEY
-            },
-            body: JSON.stringify({
-                product_id: "prod_3ciy062LZ7waMIpaP4DaVg", // Product: Jewelshot® - $1.00/Monthly
-                // Custom tracking info to resolve webhook securely
-                metadata: {
-                    userId: user.id,
-                    credits: selectedPackage.credits.toString()
-                },
-                // The user will be redirected here after success
-                success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/studio?success=true`,
-            })
+        // Creem SDK uses serverIdx: 0 for Production, 1 for Test
+        const isTestKey = apiKey.startsWith("creem_test_");
+
+        const creemClient = new Creem({
+            apiKey: apiKey,
+            serverIdx: isTestKey ? 1 : 0
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("Creem session creation failed:", errorText);
-            const errDetails = encodeURIComponent(errorText.slice(0, 150));
-            redirectUrl = `/plans?error=checkout_failed&details=${errDetails}`;
-        } else {
-            const session = await response.json();
+        // Initialize checkout session using the official SDK
+        const session = await creemClient.checkouts.create({
+            productId: "prod_3ciy062LZ7waMIpaP4DaVg", // Product: Jewelshot® - $1.00/Monthly
+            metadata: {
+                userId: user.id,
+                credits: selectedPackage.credits.toString()
+            },
+            successUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/studio?success=true`,
+        });
 
-            // Redirect to Creem.io hosted checkout page
-            if (session && session.checkout_url) {
-                redirectUrl = session.checkout_url;
-            } else if (session && session.url) {
-                redirectUrl = session.url;
-            } else {
-                console.error("Creem session creation failed, no URL returned:", session);
-                // encode the session response to see what we actually got
-                const errDetails = encodeURIComponent(JSON.stringify(session).slice(0, 100));
-                redirectUrl = `/plans?error=no_url&details=${errDetails}`;
-            }
+        if (session && session.checkoutUrl) {
+            redirectUrl = session.checkoutUrl;
+        } else {
+            console.error("Creem session creation failed, no URL returned:", session);
+            const errDetails = encodeURIComponent(JSON.stringify(session).slice(0, 100));
+            redirectUrl = `/plans?error=no_url&details=${errDetails}`;
         }
 
     } catch (error: any) {
         console.error("Error creating checkout session:", error);
-        const errMsg = encodeURIComponent(error?.message || "unknown");
+        const errMsg = encodeURIComponent(error?.message || "unknown_error_from_creem");
         redirectUrl = `/plans?error=checkout_error&msg=${errMsg}`;
     }
 
