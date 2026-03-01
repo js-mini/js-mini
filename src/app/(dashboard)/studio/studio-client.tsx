@@ -1329,7 +1329,7 @@ export default function StudioClient({ prompts }: Props) {
             </div>
 
             {/* Mobile Styles & Generate Form (Visible only on md:hidden) */}
-            <div className="md:hidden flex flex-col shrink-0 mt-auto pt-2 pb-14 border-t border-[var(--border)] relative z-10 bg-[var(--bg-primary)] -mx-4 px-4 sm:-mx-6 sm:px-6">
+            <div className="md:hidden flex flex-col shrink-0 mt-auto pt-2 pb-6 border-t border-[var(--border)] relative z-10 bg-[var(--bg-primary)] -mx-4 px-4 sm:-mx-6 sm:px-6">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--text-tertiary)" }}>Stil</span>
                     <button
