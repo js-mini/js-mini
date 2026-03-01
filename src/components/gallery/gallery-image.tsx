@@ -41,6 +41,7 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
                     className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    unoptimized={image.output_image_url.startsWith('/api/')}
                 />
 
                 {/* Hover Overlay */}
