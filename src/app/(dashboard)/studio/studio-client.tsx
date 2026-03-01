@@ -255,7 +255,7 @@ export default function StudioClient({ prompts }: Props) {
     const settingsLabel = `${aspectRatio === "auto" ? "Oto" : aspectRatio} · ${resolution} · ${outputFormat.toUpperCase()} · ${METAL_COLORS.find(m => m.value === metalColor)?.label.split(" ")[0] || "Altın"}`;
 
     const renderCategoryTabs = () => (
-        <div className="flex gap-0.5 sm:gap-1" style={{ backgroundColor: "var(--bg-secondary)", padding: "2px", borderRadius: "100px" }}>
+        <div className="flex gap-1" style={{ backgroundColor: "var(--bg-secondary)", padding: "2px", borderRadius: "100px" }}>
             {CATEGORIES.map((c) => (
                 <button
                     key={c.value}
@@ -263,7 +263,7 @@ export default function StudioClient({ prompts }: Props) {
                         setCategory(c.value);
                         setSelectedPrompt("");
                     }}
-                    className="px-2.5 py-1.5 sm:px-3 text-[11px] sm:text-[12px] font-medium transition-colors"
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 text-[12px] sm:text-sm font-medium transition-colors whitespace-nowrap"
                     style={{
                         borderRadius: "100px",
                         backgroundColor: category === c.value ? "var(--bg-primary)" : "transparent",

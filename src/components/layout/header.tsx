@@ -40,7 +40,7 @@ export function Header({ credits, userName = "Kullanıcı" }: Props) {
             </div>
 
             {/* Portal container for middle header content (like category tabs) */}
-            <div id="header-center-portal" className="flex-1 flex justify-center min-w-0 mx-2 overflow-x-auto no-scrollbar" />
+            <div id="header-center-portal" className="flex-1 flex justify-center min-w-0 mx-1 sm:mx-2" />
 
             <div
                 className="text-[13px] px-3 py-1 rounded-full"
