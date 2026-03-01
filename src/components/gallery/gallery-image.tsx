@@ -53,15 +53,7 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                     }}
                 >
                     <div className="flex gap-2">
-                        <button
-                            type="button"
-                            onClick={handleCopyPrompt}
-                            className="w-8 h-8 flex items-center justify-center rounded-full transition-colors active:scale-95 hover:bg-white/20"
-                            style={{ backgroundColor: "rgba(255,255,255,0.1)", backdropFilter: "blur(4px)" }}
-                            title="Promptu Kopyala"
-                        >
-                            {isCopied ? <Check size={14} color="#fff" /> : <Copy size={14} color="#fff" />}
-                        </button>
+
                         <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
@@ -94,14 +86,7 @@ export function GalleryImage({ image }: { image: GalleryImageRecord }) {
                         className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     />
-                    <div
-                        className="absolute bottom-4 left-4 right-4 sm:bottom-8 sm:left-1/2 sm:-translate-x-1/2 sm:max-w-2xl text-center"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <p className="text-white text-sm sm:text-base opacity-80 leading-relaxed font-light">
-                            {image.prompt_text}
-                        </p>
-                    </div>
+
                 </div>
             )}
         </>
