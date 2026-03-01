@@ -32,6 +32,8 @@ export async function createCheckoutAction(formData: FormData) {
         return redirect("/plans?error=missing_api_key");
     }
 
+    let redirectUrl = "";
+
     try {
         const selectedPackage = PACKAGE_MAP[packageId];
 
@@ -58,26 +60,31 @@ export async function createCheckoutAction(formData: FormData) {
         if (!response.ok) {
             const errorText = await response.text();
             console.error("Creem session creation failed:", errorText);
-            return redirect("/plans?error=checkout_failed");
-        }
-
-        const session = await response.json();
-
-        // Redirect to Creem.io hosted checkout page
-        if (session && session.checkout_url) {
-            return redirect(session.checkout_url);
-        } else if (session && session.url) {
-            return redirect(session.url);
+            redirectUrl = "/plans?error=checkout_failed";
         } else {
-            console.error("Creem session creation failed, no URL returned:", session);
-            // encode the session response to see what we actually got
-            const errDetails = encodeURIComponent(JSON.stringify(session).slice(0, 100));
-            return redirect(`/plans?error=no_url&details=${errDetails}`);
+            const session = await response.json();
+
+            // Redirect to Creem.io hosted checkout page
+            if (session && session.checkout_url) {
+                redirectUrl = session.checkout_url;
+            } else if (session && session.url) {
+                redirectUrl = session.url;
+            } else {
+                console.error("Creem session creation failed, no URL returned:", session);
+                // encode the session response to see what we actually got
+                const errDetails = encodeURIComponent(JSON.stringify(session).slice(0, 100));
+                redirectUrl = `/plans?error=no_url&details=${errDetails}`;
+            }
         }
 
     } catch (error: any) {
         console.error("Error creating checkout session:", error);
         const errMsg = encodeURIComponent(error?.message || "unknown");
-        return redirect(`/plans?error=checkout_error&msg=${errMsg}`);
+        redirectUrl = `/plans?error=checkout_error&msg=${errMsg}`;
+    }
+
+    // Perform redirect outside of try/catch to prevent NEXT_REDIRECT error
+    if (redirectUrl) {
+        redirect(redirectUrl);
     }
 }
