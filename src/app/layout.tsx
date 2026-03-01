@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   viewport: "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
 };
 
+import { InstallPrompt } from "@/components/layout/install-prompt";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={`${inter.className} dark`} suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        {children}
+        <InstallPrompt />
+      </body>
     </html>
   );
 }
