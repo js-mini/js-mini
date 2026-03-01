@@ -48,6 +48,7 @@ const CATEGORIES = [
 ] as const;
 
 const METAL_COLORS = [
+    { value: "orijinal", label: "Orijinal Renk Kalsın (Preserve Original)" },
     { value: "8k_sari", label: "8 Ayar Sarı Altın (8K Yellow)" },
     { value: "14k_sari", label: "14 Ayar Sarı Altın (14K Yellow)" },
     { value: "18k_sari", label: "18 Ayar Sarı Altın (18K Yellow)" },
@@ -99,7 +100,7 @@ export default function StudioClient({ prompts }: Props) {
     });
     const [selectedPrompt, setSelectedPrompt] = useState(prompts[0]?.id || "");
     const [engravingText, setEngravingText] = useState("");
-    const [metalColor, setMetalColor] = useState<typeof METAL_COLORS[number]["value"]>("14k_sari");
+    const [metalColor, setMetalColor] = useState<typeof METAL_COLORS[number]["value"]>("orijinal");
     const [aspectRatio, setAspectRatio] = useState("auto");
     const [resolution, setResolution] = useState<typeof RESOLUTIONS[number]["value"]>("1K");
     const [outputFormat, setOutputFormat] = useState<typeof FORMATS[number]["value"]>("png");

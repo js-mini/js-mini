@@ -24,7 +24,7 @@ export type GenerateOptions = {
     originalFileName: string;
     engravingText: string;
     category: string;
-    metalColor?: "8k_sari" | "14k_sari" | "18k_sari" | "22k_sari" | "beyaz" | "rose";
+    metalColor?: "orijinal" | "8k_sari" | "14k_sari" | "18k_sari" | "22k_sari" | "beyaz" | "rose";
 };
 
 export async function generateAction(options: GenerateOptions): Promise<GenerateResult> {
@@ -72,6 +72,9 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
     if (metalColor) {
         let colorInstruction = "";
         switch (metalColor) {
+            case "orijinal":
+                colorInstruction = "\n\nCRITICAL METAL COLOR: PRESERVE EXACT ORIGINAL METAL COLOR. Do NOT artificially change the metal color to yellow gold, white gold, or rose gold if it is not already that color. Extract the exact metal hue, saturation, and lightness directly from the input image and reproduce it faithfully. The resulting jewelry MUST match the original metal tone perfectly.";
+                break;
             case "8k_sari":
                 colorInstruction = "\n\nCRITICAL METAL COLOR: The jewelry piece MUST be made of authentic 8K Yellow Gold. The metal must have a pale, subtle yellow-gold hue. Do not use white gold, rose gold, brass, or overly saturated yellow tones.";
                 break;
