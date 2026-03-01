@@ -528,6 +528,7 @@ export default function StudioClient({ prompts }: Props) {
                 name="image"
                 type="file"
                 accept="image/*"
+                capture="environment"
                 onChange={handleFileChange}
                 className="hidden"
             />
@@ -696,6 +697,7 @@ export default function StudioClient({ prompts }: Props) {
                                         <input
                                             type="file"
                                             accept="image/*"
+                                            capture="environment"
                                             className="hidden"
                                             ref={(el) => { necklaceFileRefs.current[slot.key] = el; }}
                                             onChange={(e) => {
