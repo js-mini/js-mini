@@ -12,8 +12,8 @@ export async function LandingNavbar() {
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="relative w-7 h-7 overflow-hidden rounded-md transition-transform group-hover:scale-[1.02]">
+                    <Link href="/" className="flex items-center gap-3 group">
+                        <div className="relative w-9 h-9 overflow-hidden rounded-md transition-transform group-hover:scale-[1.02]">
                             <Image
                                 src="/logo.png"
                                 alt="Jewelshot®"
@@ -21,8 +21,8 @@ export async function LandingNavbar() {
                                 className="object-cover"
                             />
                         </div>
-                        <span className="text-[17px] font-bold tracking-tight text-white flex items-end">
-                            Jewelshot<sup className="text-[9px] text-zinc-500 mb-1 ml-[1px]">®</sup>
+                        <span className="text-[21px] font-bold tracking-tight text-white flex items-end">
+                            Jewelshot<sup className="text-[10px] text-zinc-500 mb-1 ml-[1px]">®</sup>
                         </span>
                     </Link>
 
