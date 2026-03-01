@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Jewelshot®",
   },
-  themeColor: "#f3b820",
+  themeColor: "#D4AF37",
   viewport: "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
 };
 

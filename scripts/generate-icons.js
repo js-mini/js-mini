@@ -10,8 +10,8 @@ const svgText = `
     </linearGradient>
   </defs>
   <rect width="100%" height="100%" rx="128" fill="url(#grad1)"/>
-  <text x="50%" y="55%" font-family="Arial, sans-serif" font-size="280" font-weight="bold" fill="#F3B820" text-anchor="middle" alignment-baseline="middle">J</text>
-  <text x="50%" y="85%" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#F3B820" text-anchor="middle" alignment-baseline="middle">SHOT</text>
+  <text x="50%" y="55%" font-family="Arial, sans-serif" font-size="280" font-weight="bold" fill="#D4AF37" text-anchor="middle" alignment-baseline="middle">J</text>
+  <text x="50%" y="85%" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="#D4AF37" text-anchor="middle" alignment-baseline="middle">SHOT</text>
 </svg>
 `;
 

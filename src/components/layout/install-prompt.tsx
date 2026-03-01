@@ -43,8 +43,8 @@ export function InstallPrompt() {
         <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 z-[9999] p-4 rounded-xl shadow-xl flex items-center justify-between gap-4 border border-white/10"
             style={{ backgroundColor: "var(--bg-primary)", color: "var(--text-primary)" }}>
             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center bg-[#f3b820]/10">
-                    <DownloadCloud size={20} color="#f3b820" />
+                <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center bg-[#D4AF37]/10">
+                    <DownloadCloud size={20} color="#D4AF37" />
                 </div>
                 <div className="flex flex-col">
                     <h4 className="text-sm font-semibold">Uygulamayı İndir</h4>
@@ -53,7 +53,7 @@ export function InstallPrompt() {
             </div>
             <button
                 onClick={handleInstallClick}
-                className="px-4 py-2 bg-[#f3b820] text-black text-xs font-semibold rounded-lg hover:bg-[#d9a21b] transition-colors"
+                className="px-4 py-2 bg-[#D4AF37] text-black text-xs font-semibold rounded-lg hover:bg-[#B5952F] transition-colors"
             >
                 Yükle
             </button>
