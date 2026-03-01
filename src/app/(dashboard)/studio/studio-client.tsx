@@ -518,7 +518,7 @@ export default function StudioClient({ prompts }: Props) {
                             </>
                         ) : (
                             <>
-                                <Camera size={14} />
+                                <Zap size={14} fill="currentColor" />
                                 Çekimi Başlat
                             </>
                         )}
@@ -1408,7 +1408,7 @@ export default function StudioClient({ prompts }: Props) {
                         </>
                     ) : (
                         <>
-                            <Camera size={14} />
+                            <Zap size={14} fill="currentColor" />
                             Çekimi Başlat
                         </>
                     )}
