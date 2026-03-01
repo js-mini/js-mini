@@ -30,6 +30,8 @@ export type GenerateOptions = {
 export async function generateAction(options: GenerateOptions): Promise<GenerateResult> {
     const { falImageUrl, additionalFalImageUrls, guideImageUrl, inputStorageUrl, promptId, aspectRatio, resolution, outputFormat, originalFileName, engravingText, category, metalColor } = options;
     const supabase = await createClient();
+    const { createAdminClient } = await import('@/lib/supabase/admin');
+    const adminClient = createAdminClient();
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
@@ -128,37 +130,20 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
         imageUrls.push(...additionalFalImageUrls);
     }
 
-    // Create generation record
-    const { data: generation, error: insertError } = await supabase
-        .from("generations")
-        .insert({
-            user_id: user.id,
-            prompt_id: promptId,
-            input_image_url: inputStorageUrl,
-            prompt_text: finalPrompt,
-            status: "processing",
-            credits_used: 1,
-        })
-        .select("id")
-        .single();
-
-    if (insertError || !generation) {
-        return { error: "Üretim kaydı oluşturulamadı." };
-    }
-
-    // Deduct credit
-    await supabase
-        .from("profiles")
-        .update({ credits: profile.credits - 1 })
-        .eq("id", user.id);
-
-    await supabase.from("credit_transactions").insert({
-        user_id: user.id,
-        amount: -1,
-        type: "usage",
-        description: `Görsel üretimi: ${prompt.name}`,
-        reference_id: generation.id,
+    // SECURE ATOMIC TRANSACTION: Call the Postgres RPC to deduct credits,
+    // lock the row, insert the generation record, and log the transaction securely.
+    const { data: generationId, error: rpcError } = await supabase.rpc('deduct_user_credit', {
+        p_user_id: user.id,
+        p_prompt_id: promptId,
+        p_input_image_url: inputStorageUrl,
+        p_prompt_text: finalPrompt,
+        p_prompt_name: prompt.name
     });
+
+    if (rpcError || !generationId) {
+        console.error("[RPC Error]", rpcError);
+        return { error: "Yetersiz kredi veya üretim başlatılamadı." };
+    }
 
     try {
         const result = await fal.subscribe("fal-ai/nano-banana-pro/edit" as Parameters<typeof fal.subscribe>[0], {
@@ -176,7 +161,7 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
         const outputUrl = data?.images?.[0]?.url;
 
         if (!outputUrl) {
-            await supabase.from("generations").update({ status: "failed" }).eq("id", generation.id);
+            await adminClient.from("generations").update({ status: "failed" }).eq("id", generationId);
             return { error: "Görsel üretimi başarısız oldu." };
         }
 
@@ -212,29 +197,34 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
         }
 
         // Store storage path in DB (not the signed URL — signed URLs expire)
-        await supabase
+        await adminClient
             .from("generations")
             .update({
                 output_image_url: storagePath,
                 status: "completed",
             })
-            .eq("id", generation.id);
+            .eq("id", generationId);
 
-        return { generationId: generation.id, outputUrl: finalUrl };
+        return { generationId, outputUrl: finalUrl };
     } catch (err: unknown) {
         const falErr = err as { body?: unknown; message?: string };
         console.error("[fal.ai error]", falErr.message, JSON.stringify(falErr.body, null, 2));
 
-        await supabase.from("generations").update({ status: "failed" }).eq("id", generation.id);
+        await adminClient.from("generations").update({ status: "failed" }).eq("id", generationId);
 
-        // Refund
-        await supabase.from("profiles").update({ credits: profile.credits }).eq("id", user.id);
-        await supabase.from("credit_transactions").insert({
+        // Refund the deducted credit securely
+        // Using an atomic increment for refund via a raw query if necessary, or a secure admin update
+        const { data: currentProfile } = await adminClient.from("profiles").select("credits").eq("id", user.id).single();
+        if (currentProfile) {
+            await adminClient.from("profiles").update({ credits: currentProfile.credits + 1 }).eq("id", user.id);
+        }
+
+        await adminClient.from("credit_transactions").insert({
             user_id: user.id,
             amount: 1,
             type: "refund",
             description: "Başarısız üretim iadesi",
-            reference_id: generation.id,
+            reference_id: generationId,
         });
 
         return { error: "Görsel üretilirken bir hata oluştu. Krediniz iade edildi." };
