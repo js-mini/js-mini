@@ -29,10 +29,10 @@ export function Header({ credits, userName = "Kullanıcı" }: Props) {
                 backgroundColor: "var(--bg-primary)",
             }}
         >
-            <div className="flex items-center gap-2 max-w-24 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
                 <MobileNav userName={userName} />
                 <span
-                    className="text-sm font-medium truncate"
+                    className="hidden sm:inline-block text-sm font-medium truncate"
                     style={{ color: "var(--text-primary)" }}
                 >
                     {title}
@@ -40,7 +40,7 @@ export function Header({ credits, userName = "Kullanıcı" }: Props) {
             </div>
 
             {/* Portal container for middle header content (like category tabs) */}
-            <div id="header-center-portal" className="flex-1 flex justify-center min-w-0" />
+            <div id="header-center-portal" className="flex-1 flex justify-center min-w-0 mx-2 overflow-x-auto no-scrollbar" />
 
             <div
                 className="text-[13px] px-3 py-1 rounded-full"
