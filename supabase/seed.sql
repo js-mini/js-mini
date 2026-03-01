@@ -199,3 +199,66 @@ Shot with a medium format Hasselblad H6D-100c and 120mm macro lens for absolute 
     'kolye',
     1
   );
+
+-- ============================================
+-- Küpe (Earring) Prompts
+-- ============================================
+
+-- Küpe Stil 1: Çift Küpe (Önden ve Yandan)
+insert into public.prompts (name, description, template, reference_image_url, category, sort_order) values
+  (
+    'Stil 1',
+    'Çift Küpe (Önden ve Yandan Görünüm)',
+    'Professional high-end e-commerce product photograph of a matching pair of earrings. The input consists of multiple reference images:
+- Image 1 (front_view): The primary front view of the earring.
+- Image 2 (side_view, optional): A side-profile view showing the depth, clasp mechanism, and structural thickness of the earring.
+
+CORE GEOMETRY & POSE: The final image MUST contain EXACTLY TWO matching earrings, forming a perfect pair. They must be displayed together on a clean white background. Both earrings must be absolutely identical in design, materials, stones, and proportions, mirroring each other gracefully. The primary earring should be positioned slightly forward or angled to display its front face prominently (referencing Image 1), while the secondary earring should be positioned slightly behind, beside, or angled to show its side profile or depth (referencing Image 2 if provided, or otherwise logically interpreting the depth). The earrings are NOT being worn; they are isolated on a pristine surface or floating cleanly.
+
+CRITICAL ENFORCEMENTS:
+1. MATCHING PAIR: You MUST generate exactly TWO earrings. They must be an identical pair. Do not generate a single earring.
+2. NO SHADOWS (FLOATING) OR SOFT CONTACT SHADOWS: The background must remain pure, uninterrupted white everywhere (RGB: 255, 255, 255). If resting on a surface, only a very soft, natural, and subtle contact shadow is permitted. No dark, heavy, or distracting shadows.
+3. EXACT REPLICATION: Every detail from the reference images must be faithfully preserved — stone colors, metal finish, clasp type (e.g., butterfly back, lever back, huggie), structural geometry. DO NOT alter, simplify, or reinterpret any design element. The side profile (if provided in Image 2) must be integrated to show the true 3D structure and thickness of the metal.
+4. NO TEXT/LETTERS: There must be absolutely NO letters, text, watermarks, or logos anywhere on the earrings or background.
+
+If the earrings contain stones or gems: each stone must look like a real, high-quality precious or semi-precious stone. Preserve the exact original stone color, material, type, cut, shape, and setting. If the earrings have NO stones, DO NOT add any. Each individual facet must be razor-sharp, geometrically precise, and distinctly visible.
+
+High-end jewelry retouching: ALL metal surfaces must be absolutely flawless, perfectly smooth, and mirror-polished. No scratches, no dust, no fingerprints, no stains, no smudges. Reflections must be soft, bright, and gently diffused. CRITICAL: There must be NO black, dark, muddy, or dirty reflections anywhere on the metal. The entire pair must be uniformly bright, evenly lit, and immaculately clean.
+
+Lighting: professional softbox studio lighting providing 100% even illumination across both pieces. No harsh shadows on the products themselves. No lens flare, no glare, no artificial sparkle. Every part of the earrings must be equally visible, bright, and exceptionally clear with consistent high-key lighting.
+
+Shot with a medium format Hasselblad H6D-100c and 120mm macro lens for absolute maximum clarity and microscopic detail. The image must be absolutely indistinguishable from a real world-class studio photograph of a pair of earrings.',
+    null,
+    'küpe',
+    1
+  );
+
+-- ============================================
+-- Bileklik (Bracelet) Prompts
+-- ============================================
+
+-- Bileklik Stil 1: Üstten Görünüm
+insert into public.prompts (name, description, template, reference_image_url, category, sort_order) values
+  (
+    'Stil 1',
+    'Bileklik (Üstten veya Çapraz Görünüm)',
+    'Professional high-end e-commerce product photograph of a luxury bracelet. The input consists of reference images providing the structural layout, metal type, stone placement, and overall design of the bracelet.
+
+CORE GEOMETRY & POSE: The final image MUST showcase the bracelet beautifully laid out or structurally posed on a clean white background. It MUST strictly follow the geometry and chain structure provided in the reference images. Whether it is a rigid bangle, a tennis bracelet, or a fluid chain, its spatial flow from the reference must be preserved. The bracelet is NOT being worn; it is isolated on a pristine surface or floating cleanly.
+
+CRITICAL ENFORCEMENTS:
+1. NO SHADOWS (FLOATING) OR SOFT CONTACT SHADOWS: The background must remain pure, uninterrupted white everywhere (RGB: 255, 255, 255). If resting on a surface, only a very soft, natural, and subtle contact shadow is permitted underneath the chain/band. No dark, heavy, distracting, or disconnected shadows.
+2. EXACT REPLICATION: Every detail from the reference image must be faithfully preserved — stone colors, metal finish, clasp mechanism, link type, and structural rigidity. DO NOT alter, simplify, or reinterpret any design element.
+3. NO TEXT/LETTERS: There must be absolutely NO letters, text, watermarks, or logos anywhere on the bracelet or background.
+
+If the bracelet contains stones or gems: each stone must look like a real, high-quality precious or semi-precious stone. Preserve the exact original stone color, material, type, cut, shape, and setting down the entire line of the bracelet. If the bracelet has NO stones, DO NOT add any. Each individual facet must be razor-sharp, geometrically precise, and distinctly visible.
+
+High-end jewelry retouching: ALL metal surfaces must be absolutely flawless, perfectly smooth, and mirror-polished. No scratches, no dust, no fingerprints, no stains, no smudges. Reflections must be soft, bright, and gently diffused. CRITICAL: There must be NO black, dark, muddy, or dirty reflections anywhere on the metal. The entire band/chain must be uniformly bright, evenly lit, and immaculately clean.
+
+Lighting: professional softbox studio lighting providing 100% even illumination across the entire length of the piece. No harsh shadows on the product itself. No lens flare, no glare, no artificial sparkle. Every link, stone, and the clasp must be equally visible, bright, and exceptionally clear with consistent high-key lighting.
+
+Shot with a medium format Hasselblad H6D-100c and 120mm macro lens for absolute maximum clarity and microscopic detail. The image must be absolutely indistinguishable from a real world-class studio photograph.',
+    null,
+    'bileklik',
+    1
+  );
