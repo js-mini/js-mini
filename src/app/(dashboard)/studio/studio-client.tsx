@@ -1027,14 +1027,28 @@ export default function StudioClient({ prompts }: Props) {
                                                     type="button"
                                                     onClick={async () => {
                                                         try {
+                                                            const text = "Powered by Jewelshot®";
+                                                            const url = "https://jewelshot.app";
+                                                            let files: File[] = [];
+
+                                                            try {
+                                                                const res = await fetch(result.outputUrl!);
+                                                                const blob = await res.blob();
+                                                                const base = fileName.replace(/\.[^.]+$/, "");
+                                                                const file = new File([blob], `${base}_edited.${outputFormat}`, { type: blob.type });
+                                                                files = [file];
+                                                            } catch (e) {
+                                                                console.error("Görsel bloba çevrilemedi.", e);
+                                                            }
+
                                                             if (navigator.share) {
-                                                                await navigator.share({
-                                                                    title: "JewelShot Görseli",
-                                                                    text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
-                                                                    url: result.outputUrl!
-                                                                });
+                                                                const shareData: ShareData = { text, url };
+                                                                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+                                                                    shareData.files = files;
+                                                                }
+                                                                await navigator.share(shareData);
                                                             } else {
-                                                                await navigator.clipboard.writeText(result.outputUrl!);
+                                                                await navigator.clipboard.writeText(`${text}\n${url}`);
                                                                 alert("Bağlantı kopyalandı!");
                                                             }
                                                         } catch (err) {
@@ -1185,14 +1199,27 @@ export default function StudioClient({ prompts }: Props) {
                                                     type="button"
                                                     onClick={async () => {
                                                         try {
+                                                            const text = "Powered by Jewelshot®";
+                                                            const url = "https://jewelshot.app";
+                                                            let files: File[] = [];
+
+                                                            try {
+                                                                const res = await fetch(result.outputUrl!);
+                                                                const blob = await res.blob();
+                                                                const file = new File([blob], `earring_edited.${outputFormat}`, { type: blob.type });
+                                                                files = [file];
+                                                            } catch (e) {
+                                                                console.error("Görsel bloba çevrilemedi.", e);
+                                                            }
+
                                                             if (navigator.share) {
-                                                                await navigator.share({
-                                                                    title: "JewelShot Görseli",
-                                                                    text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
-                                                                    url: result.outputUrl!
-                                                                });
+                                                                const shareData: ShareData = { text, url };
+                                                                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+                                                                    shareData.files = files;
+                                                                }
+                                                                await navigator.share(shareData);
                                                             } else {
-                                                                await navigator.clipboard.writeText(result.outputUrl!);
+                                                                await navigator.clipboard.writeText(`${text}\n${url}`);
                                                                 alert("Bağlantı kopyalandı!");
                                                             }
                                                         } catch (err) {
@@ -1343,14 +1370,27 @@ export default function StudioClient({ prompts }: Props) {
                                                     type="button"
                                                     onClick={async () => {
                                                         try {
+                                                            const text = "Powered by Jewelshot®";
+                                                            const url = "https://jewelshot.app";
+                                                            let files: File[] = [];
+
+                                                            try {
+                                                                const res = await fetch(result.outputUrl!);
+                                                                const blob = await res.blob();
+                                                                const file = new File([blob], `bracelet_edited.${outputFormat}`, { type: blob.type });
+                                                                files = [file];
+                                                            } catch (e) {
+                                                                console.error("Görsel bloba çevrilemedi.", e);
+                                                            }
+
                                                             if (navigator.share) {
-                                                                await navigator.share({
-                                                                    title: "JewelShot Görseli",
-                                                                    text: "JewelShot Stüdyo ile oluşturduğum tasarıma göz atın!",
-                                                                    url: result.outputUrl!
-                                                                });
+                                                                const shareData: ShareData = { text, url };
+                                                                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+                                                                    shareData.files = files;
+                                                                }
+                                                                await navigator.share(shareData);
                                                             } else {
-                                                                await navigator.clipboard.writeText(result.outputUrl!);
+                                                                await navigator.clipboard.writeText(`${text}\n${url}`);
                                                                 alert("Bağlantı kopyalandı!");
                                                             }
                                                         } catch (err) {

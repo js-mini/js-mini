@@ -87,15 +87,28 @@ export function GalleryImage({ image, priority = false }: { image: GalleryImageR
                             onClick={async (e) => {
                                 e.stopPropagation();
                                 try {
+                                    const text = "Powered by Jewelshot®";
+                                    const url = "https://jewelshot.app";
+                                    let files: File[] = [];
+
+                                    try {
+                                        const res = await fetch(image.output_image_url);
+                                        const blob = await res.blob();
+                                        const file = new File([blob], `jewelshot_${image.id}.png`, { type: blob.type });
+                                        files = [file];
+                                    } catch (err) {
+                                        console.error("Görsel bloba çevrilemedi.", err);
+                                    }
+
                                     if (navigator.share) {
-                                        await navigator.share({
-                                            title: "JewelShot Görseli",
-                                            text: "JewelShot ile oluşturduğum tasarıma göz atın!",
-                                            url: image.output_image_url
-                                        });
+                                        const shareData: ShareData = { text, url };
+                                        if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+                                            shareData.files = files;
+                                        }
+                                        await navigator.share(shareData);
                                     } else {
                                         // Fallback to copy link
-                                        await navigator.clipboard.writeText(image.output_image_url);
+                                        await navigator.clipboard.writeText(`${text}\n${url}`);
                                         alert("Bağlantı kopyalandı!");
                                     }
                                 } catch (err) {
