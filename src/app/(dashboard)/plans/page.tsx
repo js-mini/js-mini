@@ -44,8 +44,8 @@ const PLANS = [
     {
         id: "founder",
         name: "Founder",
-        badge: "Sadece 25 Kişi",
-        description: "Sürekli üretim yapan büyük markalar ve ajanslar için.",
+        badge: "VİP ÜYELİK",
+        description: "Sınırlı sayıda vizyoner marka için en üst düzey deneyim.",
         price: "149$",
         billingSuffix: "/ay",
         credits: 100,
@@ -54,9 +54,9 @@ const PLANS = [
         features: [
             "Aylık 100 Görsel Üretimi",
             "Detaylı 8K, 14K, 18K, 22K Renk Seçimi",
-            "Kusursuz Zincir ve Yansıma Kontrolü",
-            "VIP Sistem Önceliği",
-            "Öncelikli Destek"
+            "Sistem Önceliği ve VIP İşlem Hızı",
+            "Yeni Yapay Zeka Özelliklerine Erken Erişim (Beta)",
+            "Doğrudan Mühendislik Desteği"
         ],
         icon: Gem,
         popular: true,
