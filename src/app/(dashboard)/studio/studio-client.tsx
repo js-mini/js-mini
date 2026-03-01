@@ -681,7 +681,7 @@ export default function StudioClient({ prompts }: Props) {
                             style={{ borderBottom: "1px solid var(--border)" }}
                         >
                             <span className="text-[14px] font-medium" style={{ color: "var(--text-primary)" }}>
-                                Üretimi Onayla
+                                Jewelshot® Çekim Onayı
                             </span>
                             <button
                                 type="button"
@@ -696,7 +696,7 @@ export default function StudioClient({ prompts }: Props) {
                         {/* Modal body */}
                         <div className="px-5 py-5 flex flex-col gap-4">
                             <p className="text-[13px] leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                                Yapay zeka dönüşümü başlamak üzere. Başladıktan sonra bu işlem <b>kredi harcayacaktır</b>. Aşağıdaki ayarları onaylıyor musunuz?
+                                Jewelshot® Stüdyo motoru işleme başlamak üzere. Bu işlem tamamlandığında hesabınızdan <b>1 kredi kullanılacaktır</b>. Devam etmek istiyor musunuz?
                             </p>
 
                             <div className="flex flex-col gap-3 p-3 rounded-md" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
@@ -719,9 +719,9 @@ export default function StudioClient({ prompts }: Props) {
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>Kalite & Format:</span>
+                                    <span className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>Boyut & Kalite:</span>
                                     <span className="text-[12px] font-medium" style={{ color: "var(--text-primary)" }}>
-                                        {resolution} · {outputFormat.toUpperCase()}
+                                        {aspectRatio === "auto" ? "Oto" : aspectRatio} · {resolution} · {outputFormat.toUpperCase()}
                                     </span>
                                 </div>
                             </div>
@@ -738,7 +738,7 @@ export default function StudioClient({ prompts }: Props) {
                                 className="flex-1 py-2 text-[13px] font-medium rounded-md transition-colors hover:opacity-80"
                                 style={{ backgroundColor: "var(--bg-primary)", border: "1px solid var(--border)", color: "var(--text-primary)" }}
                             >
-                                İptal
+                                Vazgeç
                             </button>
                             <button
                                 id="modal-generate-btn"
@@ -748,7 +748,7 @@ export default function StudioClient({ prompts }: Props) {
                                 style={{ backgroundColor: "var(--primary)", border: "1px solid var(--border)", color: "#fff", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}
                             >
                                 <Sparkles size={14} />
-                                Onayla ve Üret
+                                Çekime Başla
                             </button>
                         </div>
                     </div>
