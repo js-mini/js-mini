@@ -4,14 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Wand2, Images, BookOpen, CreditCard } from "lucide-react";
 import { logoutAction } from "@/lib/auth/actions";
 
 const NAV = [
-    { href: "/studio", label: "Stüdyo" },
-    { href: "/gallery", label: "Galeri" },
-    { href: "/plans", label: "Planlar" },
-    { href: "/usage", label: "Kullanım" },
+    { href: "/studio", label: "Stüdyo", icon: Wand2 },
+    { href: "/gallery", label: "Galeri", icon: Images },
+    { href: "/plans", label: "Planlar", icon: CreditCard },
+    { href: "/usage", label: "Kullanım", icon: BookOpen },
 ] as const;
 
 type Props = {
@@ -54,7 +54,7 @@ export function MobileNav({ userName }: Props) {
             >
                 {/* Header Logo + Close */}
                 <div
-                    className="flex items-center justify-between px-4"
+                    className="flex items-center justify-between px-4 shrink-0"
                     style={{ height: 48, borderBottom: "1px solid var(--border)" }}
                 >
                     <div className="flex items-center gap-2">
@@ -78,17 +78,20 @@ export function MobileNav({ userName }: Props) {
                     <ul className="flex flex-col gap-2">
                         {NAV.map((item) => {
                             const active = pathname === item.href;
+                            const Icon = item.icon;
                             return (
                                 <li key={item.href}>
                                     <Link
                                         href={item.href}
                                         onClick={closeNav}
-                                        className="sidebar-link px-3 py-2 rounded-md flex items-center"
+                                        className="sidebar-link px-3 py-2 rounded-md flex items-center gap-3 font-medium text-[13px]"
                                         data-active={active || undefined}
                                         style={{
+                                            color: active ? "var(--text-primary)" : "var(--text-secondary)",
                                             backgroundColor: active ? "var(--hover)" : "transparent",
                                         }}
                                     >
+                                        <Icon size={16} />
                                         {item.label}
                                     </Link>
                                 </li>
