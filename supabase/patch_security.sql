@@ -30,7 +30,8 @@ CREATE OR REPLACE FUNCTION public.deduct_user_credit(
     p_prompt_id uuid,
     p_input_image_url text,
     p_prompt_text text,
-    p_prompt_name text
+    p_prompt_name text,
+    p_credit_amount integer DEFAULT 1
 )
 RETURNS uuid -- Returns the ID of the new generation record
 LANGUAGE plpgsql
@@ -47,13 +48,13 @@ BEGIN
     FOR UPDATE;
 
     -- Step B: Check for sufficient balance
-    IF v_current_credits < 1 THEN
+    IF v_current_credits < p_credit_amount THEN
         RAISE EXCEPTION 'Insufficient credits';
     END IF;
 
-    -- Step C: Deduct 1 credit
+    -- Step C: Deduct credits dynamically based on resolution
     UPDATE public.profiles
-    SET credits = credits - 1
+    SET credits = credits - p_credit_amount
     WHERE id = p_user_id;
 
     -- Step D: Insert the generation record (started as 'processing')
@@ -70,7 +71,7 @@ BEGIN
         p_input_image_url, 
         p_prompt_text, 
         'processing',
-        1
+        p_credit_amount
     ) RETURNING id INTO v_new_generation_id;
 
     -- Step E: Insert the credit transaction log
@@ -82,7 +83,7 @@ BEGIN
         reference_id
     ) VALUES (
         p_user_id,
-        -1,
+        -p_credit_amount,
         'usage',
         'Görsel üretimi: ' || p_prompt_name,
         v_new_generation_id::text

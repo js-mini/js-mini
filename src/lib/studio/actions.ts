@@ -42,8 +42,10 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
         .eq("id", user.id)
         .single();
 
-    if (!profile || profile.credits < 1) {
-        return { error: "Yeterli krediniz yok. Lütfen kredi satın alın." };
+    const creditCost = resolution === "4K" ? 10 : 5;
+
+    if (!profile || profile.credits < creditCost) {
+        return { error: `Yeterli krediniz yok. Bu işlem için ${creditCost} kredi gereklidir.` };
     }
 
     if (!falImageUrl) return { error: "Lütfen bir fotoğraf yükleyin." };
@@ -144,7 +146,8 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
         p_prompt_id: promptId,
         p_input_image_url: inputStorageUrl,
         p_prompt_text: finalPrompt,
-        p_prompt_name: prompt.name
+        p_prompt_name: prompt.name,
+        p_credit_amount: creditCost
     });
 
     if (rpcError || !generationId) {
@@ -223,12 +226,12 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
         // Using an atomic increment for refund via a raw query if necessary, or a secure admin update
         const { data: currentProfile } = await adminClient.from("profiles").select("credits").eq("id", user.id).single();
         if (currentProfile) {
-            await adminClient.from("profiles").update({ credits: currentProfile.credits + 1 }).eq("id", user.id);
+            await adminClient.from("profiles").update({ credits: currentProfile.credits + creditCost }).eq("id", user.id);
         }
 
         await adminClient.from("credit_transactions").insert({
             user_id: user.id,
-            amount: 1,
+            amount: creditCost,
             type: "refund",
             description: "Başarısız üretim iadesi",
             reference_id: generationId,
