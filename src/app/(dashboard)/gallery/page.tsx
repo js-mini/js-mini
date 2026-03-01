@@ -8,7 +8,7 @@ export const metadata = {
 
 export default async function GalleryPage() {
     // Fetch latest generations on the server-side
-    const { data: images, error } = await getRecentGenerations(25);
+    const { data: images, error } = await getRecentGenerations(30);
 
     return (
         <div className="flex flex-col h-full overflow-hidden" style={{ backgroundColor: "var(--bg-primary)" }}>
