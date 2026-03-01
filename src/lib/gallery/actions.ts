@@ -34,31 +34,23 @@ export async function getRecentGenerations(limit: number = 20): Promise<{ data: 
             return { data: null, error: "Görseller yüklenirken bir hata oluştu." };
         }
 
-        // Map the storage paths to actual secure Signed URLs
-        // Because the 'outputs' bucket is private, getPublicUrl will return 403s.
-        // We must use createSignedUrl for each image.
-        const mappedData = await Promise.all(
-            (data as GalleryImageRecord[]).map(async (record) => {
-                let finalUrl = record.output_image_url;
-                if (!finalUrl.startsWith("http")) {
-                    // Create a signed URL valid for 1 hour (3600 seconds)
-                    const { data: signedData } = await supabase.storage
-                        .from("outputs")
-                        .createSignedUrl(finalUrl, 3600);
+        // Map the storage paths to our secure Next.js API proxy route
+        // This hides the Supabase URL from the client browser completely.
+        const mappedData = data.map((record) => {
+            let finalUrl = record.output_image_url;
 
-                    if (signedData?.signedUrl) {
-                        finalUrl = signedData.signedUrl;
-                    }
-                }
+            // If it's a raw Supabase Storage path (doesn't start with http), proxy it
+            if (finalUrl && !finalUrl.startsWith("http")) {
+                finalUrl = `/api/images/${record.id}`;
+            }
 
-                return {
-                    ...record,
-                    output_image_url: finalUrl,
-                };
-            })
-        );
+            return {
+                ...record,
+                output_image_url: finalUrl,
+            };
+        });
 
-        return { data: mappedData, error: null };
+        return { data: mappedData as GalleryImageRecord[], error: null };
     } catch (e: any) {
         console.error("Unexpected error fetching gallery:", e);
         return { data: null, error: "Beklenmeyen bir hata oluştu." };
