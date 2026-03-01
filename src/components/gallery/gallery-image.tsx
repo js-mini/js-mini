@@ -34,9 +34,9 @@ export function GalleryImage({ image, priority = false }: { image: GalleryImageR
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={toggleFullscreen}
             >
-                {/* Image */}
+                {/* Thumbnail Image */}
                 <Image
-                    src={image.output_image_url}
+                    src={image.thumbnail_url || image.output_image_url}
                     alt={image.output_image_url.split('/').pop()?.split('?')[0] || "Oluşturulan Görsel"}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
