@@ -50,7 +50,7 @@ export function InstallPrompt() {
     if (!isInstallable || isDismissed) return null;
 
     return (
-        <div className="fixed bottom-safe md:bottom-4 left-4 right-4 md:left-auto md:right-4 z-[9999] p-4 rounded-xl shadow-2xl flex items-center justify-between gap-4 border border-white/10 bg-zinc-900/95 backdrop-blur-md">
+        <div className="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 z-[9999] p-4 rounded-xl shadow-2xl flex items-center justify-between gap-4 border border-white/10 bg-zinc-900/95 backdrop-blur-md">
             <button
                 onClick={() => setIsDismissed(true)}
                 className="absolute -top-2 -right-2 bg-zinc-800 text-zinc-400 hover:text-white rounded-full p-1 border border-white/10 shadow-sm"
