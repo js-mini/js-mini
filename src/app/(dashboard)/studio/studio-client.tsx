@@ -3,12 +3,11 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { X, Image as ImageIcon, Loader2, Download, Settings, Camera, Zap, Share2 } from "lucide-react";
+import { Image as ImageIcon, Settings, Loader2, Zap } from "lucide-react";
 import { generateAction, type GenerateResult } from "@/lib/studio/actions";
 import { RightSidebarPortal } from "@/components/layout/right-sidebar";
 import {
-    ASPECT_RATIOS, RESOLUTIONS, FORMATS, CATEGORIES, METAL_COLORS,
-    NECKLACE_SLOTS, EARRING_SLOTS, BRACELET_SLOTS,
+    CATEGORIES, METAL_COLORS, RESOLUTIONS, FORMATS,
     type NecklaceSlot, type NecklaceFileState,
     type EarringSlot, type EarringFileState,
     type BraceletSlot, type BraceletFileState,
@@ -605,92 +604,92 @@ export default function StudioClient({ prompts }: Props) {
 
 
 
-            {/* Mobile Styles & Generate Form (Visible only on md:hidden) */ }
-    <div className="md:hidden flex flex-col shrink-0 mt-auto pt-2 pb-2 border-t border-[var(--border)] relative z-10 bg-[var(--bg-primary)] -mx-4 px-4 sm:-mx-6 sm:px-6">
-        <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--text-tertiary)" }}>Stil</span>
-            <button
-                type="button"
-                onClick={() => setShowSettings(true)}
-                className="text-[11px] flex gap-1 items-center font-medium"
-                style={{ color: "var(--text-primary)" }}
-            >
-                <Settings size={12} />
-                Ayarlar
-            </button>
-        </div>
-        <div className="flex overflow-x-auto gap-3 pb-3 scrollbar-hide snap-x">
-            {filteredPrompts.length > 0 ? filteredPrompts.map((p, i) => {
-                const handleStyleClick = () => {
-                    setSelectedPrompt(p.id);
-                    if (category === "yuzuk" && file) {
-                        setTimeout(() => {
-                            const btn = document.getElementById("generate-btn-mobile");
-                            btn?.click();
-                        }, 50);
-                    }
-                };
-                const presetPrefix = category === "yuzuk" ? "ring" : category;
-                return (
+            {/* Mobile Styles & Generate Form (Visible only on md:hidden) */}
+            <div className="md:hidden flex flex-col shrink-0 mt-auto pt-2 pb-2 border-t border-[var(--border)] relative z-10 bg-[var(--bg-primary)] -mx-4 px-4 sm:-mx-6 sm:px-6">
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--text-tertiary)" }}>Stil</span>
                     <button
-                        key={`m-${p.id}`}
                         type="button"
-                        onClick={handleStyleClick}
-                        className="flex flex-col cursor-pointer transition-colors overflow-hidden shrink-0 w-20 snap-start"
-                        style={{
-                            borderRadius: "var(--radius-md)",
-                            border: selectedPrompt === p.id ? "1px solid var(--text-primary)" : "1px solid var(--border)",
-                            backgroundColor: selectedPrompt === p.id ? "var(--bg-secondary)" : "transparent",
-                        }}
+                        onClick={() => setShowSettings(true)}
+                        className="text-[11px] flex gap-1 items-center font-medium"
+                        style={{ color: "var(--text-primary)" }}
                     >
-                        <img
-                            src={`/presets/${presetPrefix}_${i + 1}.png`}
-                            alt={`Stil ${i + 1}`}
-                            className="w-full object-cover"
-                            style={{ aspectRatio: "1/1" }}
-                        />
-                        <span
-                            className="text-[10px] py-1 px-1.5 w-full text-center truncate"
-                            style={{ color: selectedPrompt === p.id ? "var(--text-primary)" : "var(--text-secondary)" }}
-                        >
-                            Stil {i + 1}
-                        </span>
+                        <Settings size={12} />
+                        Ayarlar
                     </button>
-                );
-            }) : (
-                <div className="flex flex-col items-center justify-center p-4 gap-1 w-full border border-dashed border-[var(--border)] rounded-md">
-                    <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>Yakında</span>
                 </div>
-            )}
-        </div>
+                <div className="flex overflow-x-auto gap-3 pb-3 scrollbar-hide snap-x">
+                    {filteredPrompts.length > 0 ? filteredPrompts.map((p, i) => {
+                        const handleStyleClick = () => {
+                            setSelectedPrompt(p.id);
+                            if (category === "yuzuk" && file) {
+                                setTimeout(() => {
+                                    const btn = document.getElementById("generate-btn-mobile");
+                                    btn?.click();
+                                }, 50);
+                            }
+                        };
+                        const presetPrefix = category === "yuzuk" ? "ring" : category;
+                        return (
+                            <button
+                                key={`m-${p.id}`}
+                                type="button"
+                                onClick={handleStyleClick}
+                                className="flex flex-col cursor-pointer transition-colors overflow-hidden shrink-0 w-20 snap-start"
+                                style={{
+                                    borderRadius: "var(--radius-md)",
+                                    border: selectedPrompt === p.id ? "1px solid var(--text-primary)" : "1px solid var(--border)",
+                                    backgroundColor: selectedPrompt === p.id ? "var(--bg-secondary)" : "transparent",
+                                }}
+                            >
+                                <img
+                                    src={`/presets/${presetPrefix}_${i + 1}.png`}
+                                    alt={`Stil ${i + 1}`}
+                                    className="w-full object-cover"
+                                    style={{ aspectRatio: "1/1" }}
+                                />
+                                <span
+                                    className="text-[10px] py-1 px-1.5 w-full text-center truncate"
+                                    style={{ color: selectedPrompt === p.id ? "var(--text-primary)" : "var(--text-secondary)" }}
+                                >
+                                    Stil {i + 1}
+                                </span>
+                            </button>
+                        );
+                    }) : (
+                        <div className="flex flex-col items-center justify-center p-4 gap-1 w-full border border-dashed border-[var(--border)] rounded-md">
+                            <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>Yakında</span>
+                        </div>
+                    )}
+                </div>
 
-        <button
-            id="generate-btn-mobile"
-            type="button"
-            onClick={handleSubmit}
-            disabled={
-                isPending ||
-                (category === "yuzuk" && !file) ||
-                (category === "kolye" && !necklaceFiles.genel) ||
-                (category === "kupe" && !earringFiles.onden) ||
-                (category === "bileklik" && !braceletFiles.ustten) ||
-                !selectedPrompt
-            }
-            className="btn-primary flex items-center justify-center gap-2 w-full mt-1"
-        >
-            {isPending ? (
-                <>
-                    <Loader2 size={14} className="animate-spin" />
-                    {statusText}
-                </>
-            ) : (
-                <>
-                    <Zap size={14} fill="currentColor" />
-                    Çekimi Başlat
-                </>
-            )}
-        </button>
-    </div>
+                <button
+                    id="generate-btn-mobile"
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={
+                        isPending ||
+                        (category === "yuzuk" && !file) ||
+                        (category === "kolye" && !necklaceFiles.genel) ||
+                        (category === "kupe" && !earringFiles.onden) ||
+                        (category === "bileklik" && !braceletFiles.ustten) ||
+                        !selectedPrompt
+                    }
+                    className="btn-primary flex items-center justify-center gap-2 w-full mt-1"
+                >
+                    {isPending ? (
+                        <>
+                            <Loader2 size={14} className="animate-spin" />
+                            {statusText}
+                        </>
+                    ) : (
+                        <>
+                            <Zap size={14} fill="currentColor" />
+                            Çekimi Başlat
+                        </>
+                    )}
+                </button>
+            </div>
         </div >
     );
 }
