@@ -78,7 +78,7 @@ export async function getRecentGenerations(limit: number = 20): Promise<{ data: 
         );
 
         return { data: mappedData, error: null };
-    } catch (e: any) {
+    } catch (e: unknown) {
         console.error("Unexpected error fetching gallery:", e);
         return { data: null, error: "Beklenmeyen bir hata oluştu." };
     }

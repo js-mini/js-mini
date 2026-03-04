@@ -78,9 +78,11 @@ export async function createCheckoutAction(formData: FormData) {
             redirectUrl = `/plans?error=no_url&details=${errDetails}`;
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error creating checkout session:", error);
-        const errMsg = encodeURIComponent(error?.message || "unknown_error_from_creem");
+        const errMsg = encodeURIComponent(
+            error instanceof Error ? error.message : "unknown_error_from_creem"
+        );
         redirectUrl = `/plans?error=checkout_error&msg=${errMsg}`;
     }
 

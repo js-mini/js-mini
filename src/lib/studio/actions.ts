@@ -36,17 +36,11 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("credits")
-        .eq("id", user.id)
-        .single();
-
+    // Credit cost is computed here because it's passed to the RPC.
+    // The actual balance check and deduction are done ATOMICALLY inside  
+    // `deduct_user_credit` (Postgres row-lock → check → deduct in one transaction).
+    // A pre-flight SELECT here would be a stale read with a race window, so it is omitted.
     const creditCost = resolution === "4K" ? 2 : 1;
-
-    if (!profile || profile.credits < creditCost) {
-        return { error: `Yeterli krediniz yok. Bu işlem için ${creditCost} kredi gereklidir.` };
-    }
 
     if (!falImageUrl) return { error: "Lütfen bir fotoğraf yükleyin." };
     if (!promptId) return { error: "Lütfen bir stil seçin." };
