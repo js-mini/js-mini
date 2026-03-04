@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 import { fal } from "@/lib/fal/client";
 import * as fs from "fs/promises";
@@ -30,7 +31,6 @@ export type GenerateOptions = {
 export async function generateAction(options: GenerateOptions): Promise<GenerateResult> {
     const { falImageUrl, additionalFalImageUrls, guideImageUrl, inputStorageUrl, promptId, aspectRatio, resolution, outputFormat, originalFileName, engravingText, category, metalColor } = options;
     const supabase = await createClient();
-    const { createAdminClient } = await import('@/lib/supabase/admin');
     const adminClient = createAdminClient();
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -217,25 +217,25 @@ export async function generateAction(options: GenerateOptions): Promise<Generate
 
         return { generationId, outputUrl: finalUrl };
     } catch (err: unknown) {
-        const falErr = err as { body?: unknown; message?: string };
-        console.error("[fal.ai error]", falErr.message, JSON.stringify(falErr.body, null, 2));
+        const message = err instanceof Error ? err.message : String(err);
+        const body = (err as Record<string, unknown>)?.body;
+        console.error("[fal.ai error]", message, body ? JSON.stringify(body, null, 2) : "");
 
         await adminClient.from("generations").update({ status: "failed" }).eq("id", generationId);
 
-        // Refund the deducted credit securely
-        // Using an atomic increment for refund via a raw query if necessary, or a secure admin update
-        const { data: currentProfile } = await adminClient.from("profiles").select("credits").eq("id", user.id).single();
-        if (currentProfile) {
-            await adminClient.from("profiles").update({ credits: currentProfile.credits + creditCost }).eq("id", user.id);
-        }
-
-        await adminClient.from("credit_transactions").insert({
-            user_id: user.id,
-            amount: creditCost,
-            type: "refund",
-            description: "Başarısız üretim iadesi",
-            reference_id: generationId,
+        // Atomic refund via RPC — replaces the old non-atomic SELECT + UPDATE pattern.
+        // This single Postgres function updates credits with `credits + amount` expression
+        // (no read, no race window) and inserts the audit log in the same transaction.
+        const { error: refundError } = await supabase.rpc("refund_user_credit", {
+            p_user_id: user.id,
+            p_credit_amount: creditCost,
+            p_generation_id: generationId,
         });
+
+        if (refundError) {
+            console.error("[CRITICAL] Credit refund RPC failed:", refundError);
+            // Don't swallow — the amount is lost if we don't alert
+        }
 
         return { error: "Görsel üretilirken bir hata oluştu. Krediniz iade edildi." };
     }

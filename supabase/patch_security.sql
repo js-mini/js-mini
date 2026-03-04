@@ -177,3 +177,49 @@ BEGIN
     );
 END;
 $$;
+
+
+-- 4. ATOMIC CREDIT REFUND RPC
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Called from studio/actions.ts when a fal.ai generation fails.
+-- Replaces the old non-atomic:
+--   SELECT credits → credits + amount → UPDATE
+-- with a single, lock-free, atomic expression:
+--   UPDATE profiles SET credits = credits + p_amount
+-- No row-level read is needed, so there is zero race condition window.
+
+CREATE OR REPLACE FUNCTION public.refund_user_credit(
+    p_user_id       uuid,
+    p_credit_amount integer,
+    p_generation_id uuid
+)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    -- Atomic add — no SELECT required
+    UPDATE public.profiles
+    SET credits = credits + p_credit_amount
+    WHERE id = p_user_id;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'refund_user_credit: user % not found', p_user_id;
+    END IF;
+
+    -- Audit log
+    INSERT INTO public.credit_transactions (
+        user_id,
+        amount,
+        type,
+        description,
+        reference_id
+    ) VALUES (
+        p_user_id,
+        p_credit_amount,
+        'refund',
+        'Başarısız üretim iadesi',
+        p_generation_id::text
+    );
+END;
+$$;
