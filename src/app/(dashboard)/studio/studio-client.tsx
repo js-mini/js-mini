@@ -19,6 +19,7 @@ import { RingCanvas } from "./components/RingCanvas";
 import { NecklaceCanvas } from "./components/NecklaceCanvas";
 import { EarringCanvas } from "./components/EarringCanvas";
 import { BraceletCanvas } from "./components/BraceletCanvas";
+import { uploadFile } from "@/lib/studio/uploadFile";
 
 type PromptOption = {
     id: string;
@@ -203,12 +204,9 @@ export default function StudioClient({ prompts }: Props) {
 
             if (category === "yuzuk") {
                 // Ring: single image upload
-                const formData = new FormData();
-                formData.append("file", file!);
-                const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-                const uploadData = await uploadRes.json();
-                if (!uploadRes.ok || !uploadData.falUrl) {
-                    setResult({ error: uploadData.error || "Fotoğraf yüklenemedi." });
+                const uploaded = await uploadFile(file!);
+                if (!uploaded) {
+                    setResult({ error: "Fotoğraf yüklenemedi." });
                     setIsPending(false);
                     setStatusText("");
                     return;
@@ -216,8 +214,8 @@ export default function StudioClient({ prompts }: Props) {
 
                 setStatusText("Görsel üretiliyor...");
                 const res = await generateAction({
-                    falImageUrl: uploadData.falUrl,
-                    inputStorageUrl: uploadData.inputStoragePath,
+                    falImageUrl: uploaded.falUrl,
+                    inputStorageUrl: uploaded.inputStoragePath,
                     promptId: selectedPrompt,
                     aspectRatio,
                     resolution,
@@ -234,12 +232,9 @@ export default function StudioClient({ prompts }: Props) {
                 const uploadPromises = slots.map(async (slot) => {
                     const slotData = necklaceFiles[slot];
                     if (!slotData) return null;
-                    const formData = new FormData();
-                    formData.append("file", slotData.file);
-                    const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-                    const uploadData = await uploadRes.json();
-                    if (!uploadRes.ok || !uploadData.falUrl) return null;
-                    return { slot, falUrl: uploadData.falUrl, storagePath: uploadData.inputStoragePath };
+                    const result = await uploadFile(slotData.file);
+                    if (!result) return null;
+                    return { slot, falUrl: result.falUrl, storagePath: result.inputStoragePath };
                 });
 
                 const uploadResults = await Promise.all(uploadPromises);
@@ -283,12 +278,9 @@ export default function StudioClient({ prompts }: Props) {
                 const uploadPromises = slots.map(async (slot) => {
                     const slotData = earringFiles[slot];
                     if (!slotData) return null;
-                    const formData = new FormData();
-                    formData.append("file", slotData.file);
-                    const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-                    const uploadData = await uploadRes.json();
-                    if (!uploadRes.ok || !uploadData.falUrl) return null;
-                    return { slot, falUrl: uploadData.falUrl, storagePath: uploadData.inputStoragePath };
+                    const result = await uploadFile(slotData.file);
+                    if (!result) return null;
+                    return { slot, falUrl: result.falUrl, storagePath: result.inputStoragePath };
                 });
 
                 const uploadResults = await Promise.all(uploadPromises);
@@ -325,12 +317,9 @@ export default function StudioClient({ prompts }: Props) {
                 const uploadPromises = slots.map(async (slot) => {
                     const slotData = braceletFiles[slot];
                     if (!slotData) return null;
-                    const formData = new FormData();
-                    formData.append("file", slotData.file);
-                    const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-                    const uploadData = await uploadRes.json();
-                    if (!uploadRes.ok || !uploadData.falUrl) return null;
-                    return { slot, falUrl: uploadData.falUrl, storagePath: uploadData.inputStoragePath };
+                    const result = await uploadFile(slotData.file);
+                    if (!result) return null;
+                    return { slot, falUrl: result.falUrl, storagePath: result.inputStoragePath };
                 });
 
                 const uploadResults = await Promise.all(uploadPromises);
