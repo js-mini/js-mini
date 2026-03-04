@@ -722,7 +722,7 @@ export default function StudioClient({ prompts }: Props) {
                                 <div className="flex justify-between items-center">
                                     <span className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>Uygulanacak Stil:</span>
                                     <span className="text-[12px] font-medium" style={{ color: "var(--text-primary)" }}>
-                                        {prompts.find((p: any) => p.id === selectedPrompt)?.name || "Seçilmedi"}
+                                        {prompts.find((p) => p.id === selectedPrompt)?.name || "Seçilmedi"}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
