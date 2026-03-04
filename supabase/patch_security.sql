@@ -93,3 +93,87 @@ BEGIN
     RETURN v_new_generation_id;
 END;
 $$;
+
+
+-- 3. ATOMIC PURCHASE CREDIT GRANT (called from Creem.io webhook)
+-- ─────────────────────────────────────────────────────────────────────────────
+-- This function is called by the Creem webhook handler instead of the previous
+-- non-atomic SELECT+UPDATE pattern.
+--
+-- It solves three problems simultaneously in one Postgres transaction:
+--   a) Idempotency: the UNIQUE constraint on payments.creem_checkout_id means
+--      a duplicate webhook event is a no-op (INSERT ... ON CONFLICT DO NOTHING).
+--   b) Race condition: credits are updated with an atomic `credits + p_credits`
+--      expression — no read-compute-write pattern.
+--   c) Split transaction: payment record insert and credit update happen in the
+--      same transaction; if either fails, both roll back.
+--
+-- Run this in Supabase SQL Editor side-by-side with deduct_user_credit above.
+
+CREATE OR REPLACE FUNCTION public.grant_purchase_credits(
+    p_user_id   uuid,
+    p_checkout_id text,
+    p_credits   integer,
+    p_amount    numeric DEFAULT 0,
+    p_currency  text    DEFAULT 'USD'
+)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_inserted boolean := false;
+BEGIN
+    -- Step A: Insert payment record.
+    --   ON CONFLICT DO NOTHING makes this idempotent: if the same checkout_id
+    --   arrives twice, the second call is a silent no-op and credits are NOT doubled.
+    INSERT INTO public.payments (
+        user_id,
+        creem_checkout_id,
+        amount,
+        currency,
+        credits_purchased,
+        status
+    ) VALUES (
+        p_user_id,
+        p_checkout_id,
+        p_amount,
+        p_currency,
+        p_credits,
+        'success'
+    )
+    ON CONFLICT (creem_checkout_id) DO NOTHING;
+
+    -- Step B: Only proceed if the INSERT actually created a new row.
+    --   GET DIAGNOSTICS lets us check whether ON CONFLICT fired.
+    GET DIAGNOSTICS v_inserted = ROW_COUNT;
+    IF NOT v_inserted THEN
+        RAISE NOTICE 'grant_purchase_credits: checkout % already processed, skipping.', p_checkout_id;
+        RETURN;
+    END IF;
+
+    -- Step C: Atomically increment credits — no SELECT needed.
+    UPDATE public.profiles
+    SET credits = credits + p_credits
+    WHERE id = p_user_id;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'User profile % not found', p_user_id;
+    END IF;
+
+    -- Step D: Log the credit transaction.
+    INSERT INTO public.credit_transactions (
+        user_id,
+        amount,
+        type,
+        description,
+        reference_id
+    ) VALUES (
+        p_user_id,
+        p_credits,
+        'purchase',
+        'Creem.io satın alımı: ' || p_credits || ' kredi (' || p_checkout_id || ')',
+        p_checkout_id
+    );
+END;
+$$;
