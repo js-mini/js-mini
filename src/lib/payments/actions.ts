@@ -22,8 +22,13 @@ export async function createCheckoutAction(formData: FormData) {
     }
 
     if (packageId === "founder") {
-        // Strict invite code check. The valid invite code is JSFOUNDER25
-        if (!inviteCode || inviteCode.trim().toUpperCase() !== "JSFOUNDER25") {
+        const founderCode = process.env.FOUNDER_INVITE_CODE;
+        if (!founderCode) {
+            // Env var not configured — fail closed, never let anyone in
+            console.error("[SECURITY] FOUNDER_INVITE_CODE env variable is not set.");
+            return redirect("/plans?error=service_unavailable");
+        }
+        if (!inviteCode || inviteCode.trim().toUpperCase() !== founderCode.trim().toUpperCase()) {
             return redirect("/plans?error=invalid_invite_code");
         }
     }
