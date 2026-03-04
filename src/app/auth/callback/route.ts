@@ -4,13 +4,18 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
     const code = searchParams.get("code");
-    const next = searchParams.get("next") ?? "/studio";
+    const rawNext = searchParams.get("next") ?? "/studio";
+    // Validate: only allow same-origin relative paths.
+    // Reject empty, protocol-relative (//evil.com), or absolute URLs.
+    const safeNext = rawNext.startsWith("/") && !rawNext.startsWith("//")
+        ? rawNext
+        : "/studio";
 
     if (code) {
         const supabase = await createClient();
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (!error) {
-            return NextResponse.redirect(`${origin}${next}`);
+            return NextResponse.redirect(`${origin}${safeNext}`);
         }
     }
 

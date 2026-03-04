@@ -18,12 +18,13 @@ create table public.profiles (
 
 alter table public.profiles enable row level security;
 
+-- Users can read their own profile (credits, plan, etc.)
+-- Write access is intentionally omitted: credit deduction/addition and plan changes
+-- are done exclusively via SECURITY DEFINER RPCs (deduct_user_credit,
+-- grant_purchase_credits, refund_user_credit) using the service role key.
+-- This prevents any client-side manipulation of credits or plan fields.
 create policy "Users can read own profile"
   on public.profiles for select
-  using (auth.uid() = id);
-
-create policy "Users can update own profile"
-  on public.profiles for update
   using (auth.uid() = id);
 
 -- Auto-create profile on signup

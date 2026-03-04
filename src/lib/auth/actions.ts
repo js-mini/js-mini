@@ -51,7 +51,10 @@ export async function registerAction(formData: FormData): Promise<AuthResult> {
     });
 
     if (error) {
-        return { error: error.message };
+        // Use a generic message — Supabase error messages (e.g. "User already registered")
+        // should not be exposed to the client as they reveal internal implementation details.
+        console.error("[registerAction]", error.message);
+        return { error: "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin." };
     }
 
     redirect("/studio");

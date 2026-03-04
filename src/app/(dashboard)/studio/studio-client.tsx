@@ -684,7 +684,7 @@ export default function StudioClient({ prompts }: Props) {
                         {/* Modal body */}
                         <div className="px-5 py-5 flex flex-col gap-4">
                             <p className="text-[13px] leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                                Jewelshot® işleme başlamak üzere... Bu işlem tamamlandığında hesabınızdan <b>1 kredi kullanılacaktır</b>. Devam etmek istiyor musunuz?
+                                Jewelshot® işleme başlamak üzere... Bu işlem tamamlandığında hesabınızdan <b>{resolution === "4K" ? "2 kredi" : "1 kredi"} kullanılacaktır</b>. Devam etmek istiyor musunuz?
                             </p>
 
                             <div className="flex flex-col gap-3 p-3 rounded-md" style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
@@ -934,7 +934,7 @@ export default function StudioClient({ prompts }: Props) {
 
                             <div className="text-center mt-2">
                                 <p className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>
-                                    PNG, JPG, WEBP — maks. 10MB
+                                    PNG, JPG, WEBP — maks. 20MB
                                 </p>
                             </div>
                         </div>

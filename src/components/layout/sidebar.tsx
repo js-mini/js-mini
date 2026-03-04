@@ -4,13 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "@/lib/auth/actions";
-import { Wand2, Images, BookOpen, CreditCard } from "lucide-react";
+import { Wand2, Images, CreditCard } from "lucide-react";
 
 const NAV = [
     { href: "/studio", label: "Stüdyo", icon: Wand2 },
     { href: "/gallery", label: "Galeri", icon: Images },
     { href: "/plans", label: "Planlar", icon: CreditCard },
-    { href: "/usage", label: "Kullanım", icon: BookOpen },
 ] as const;
 
 type Props = {
