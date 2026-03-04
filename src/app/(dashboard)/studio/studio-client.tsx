@@ -122,6 +122,31 @@ export default function StudioClient({ prompts }: Props) {
         setHeaderPortalElement(document.getElementById("header-center-portal"));
     }, []);
 
+    // ── Blob URL cleanup: revoke when preview changes or component unmounts ─────
+    // URL.createObjectURL allocates memory in the browser that is NOT garbage-collected
+    // automatically. Without this cleanup, every file the user opens leaks a blob.
+    useEffect(() => {
+        return () => { if (preview) URL.revokeObjectURL(preview); };
+    }, [preview]);
+
+    useEffect(() => {
+        return () => {
+            Object.values(necklaceFiles).forEach(s => { if (s) URL.revokeObjectURL(s.preview); });
+        };
+    }, [necklaceFiles]);
+
+    useEffect(() => {
+        return () => {
+            Object.values(earringFiles).forEach(s => { if (s) URL.revokeObjectURL(s.preview); });
+        };
+    }, [earringFiles]);
+
+    useEffect(() => {
+        return () => {
+            Object.values(braceletFiles).forEach(s => { if (s) URL.revokeObjectURL(s.preview); });
+        };
+    }, [braceletFiles]);
+
     const currentDbCategory = CATEGORIES.find(c => c.value === category)?.dbCategory || "yüzük";
     const filteredPrompts = prompts.filter(p => p.category === currentDbCategory);
 
