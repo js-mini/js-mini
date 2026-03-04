@@ -223,3 +223,36 @@ BEGIN
     );
 END;
 $$;
+
+
+-- 5. GENERATIONS STATUS CHECK CONSTRAINT
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Enforces that generations.status can only ever be one of the four known values.
+-- Without this, any string can be written to the column — a bug or a compromised
+-- server action could set status to an arbitrary value, breaking queries that
+-- filter on status (e.g. gallery fetches "completed" only).
+--
+-- This constraint is safe to add on an existing table: Postgres validates all
+-- existing rows in a single scan before applying the constraint, so if any row
+-- already has an invalid status this will raise an error (revealing the bad data).
+--
+-- NOTE: This is a database-level migration step. Run once in Supabase SQL Editor.
+-- The IF NOT EXISTS guard makes re-running this script idempotent.
+
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.constraint_column_usage
+        WHERE table_name = 'generations'
+          AND constraint_name = 'generations_status_check'
+    ) THEN
+        ALTER TABLE public.generations
+        ADD CONSTRAINT generations_status_check
+        CHECK (status IN ('pending', 'processing', 'completed', 'failed'));
+
+        RAISE NOTICE 'generations_status_check constraint added.';
+    ELSE
+        RAISE NOTICE 'generations_status_check already exists, skipping.';
+    END IF;
+END;
+$$;
