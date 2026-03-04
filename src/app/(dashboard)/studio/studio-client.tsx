@@ -16,6 +16,10 @@ import {
 import { Chip } from "./components/Chip";
 import { SettingsModal } from "./components/SettingsModal";
 import { ConfirmModal } from "./components/ConfirmModal";
+import { RingCanvas } from "./components/RingCanvas";
+import { NecklaceCanvas } from "./components/NecklaceCanvas";
+import { EarringCanvas } from "./components/EarringCanvas";
+import { BraceletCanvas } from "./components/BraceletCanvas";
 
 type PromptOption = {
     id: string;
@@ -529,718 +533,66 @@ export default function StudioClient({ prompts }: Props) {
                 outputFormat={outputFormat}
             />
 
-            {/* Error */}
-            {result.error && (
-                <div
-                    className="text-[13px] px-3 py-2.5 mb-4"
-                    style={{
-                        borderRadius: "var(--radius-md)",
-                        backgroundColor: "rgba(239,68,68,0.1)",
-                        color: "var(--error)",
-                        border: "1px solid rgba(239,68,68,0.2)",
-                    }}
-                >
-                    {result.error}
-                </div>
-            )}
-
-            <input
-                ref={fileRef}
-                name="image"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="hidden"
-            />
-            <input
-                ref={cameraRef}
-                name="camera"
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handleFileChange}
-                className="hidden"
-            />
-
             {/* Canvas */}
             <div className="flex-1 flex items-center justify-center min-h-0 gap-6">
                 {category === "yuzuk" ? (
-                    /* ── Ring Canvas (single image) ── */
-                    preview ? (
-                        <>
-                            {/* Original */}
-                            <div className="relative flex flex-col items-center gap-2 max-w-[45%]">
-                                <div className="relative group">
-                                    <img
-                                        src={preview}
-                                        alt="Orijinal"
-                                        className="max-h-[50vh] max-w-full object-contain"
-                                        style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={clearImage}
-                                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                                        style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                    >
-                                        <X size={14} />
-                                    </button>
-                                </div>
-                                <span className="text-[11px] uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
-                                    Orijinal
-                                </span>
-                            </div>
-
-                            {/* Generated */}
-                            {result.outputUrl ? (
-                                <div className="flex flex-col items-center gap-2 max-w-[45%]">
-                                    <div className="relative group">
-                                        <img
-                                            src={result.outputUrl}
-                                            alt="Üretilen"
-                                            className="max-h-[50vh] max-w-full object-contain"
-                                            style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}
-                                        />
-                                        <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
-                                                type="button"
-                                                onClick={async () => {
-                                                    try {
-                                                        if (navigator.share) {
-                                                            await navigator.share({
-                                                                title: "Jewelshot® Görseli",
-                                                                text: "Jewelshot® Stüdyo ile oluşturduğum tasarıma göz atın!",
-                                                                url: result.outputUrl!
-                                                            });
-                                                        } else {
-                                                            await navigator.clipboard.writeText(result.outputUrl!);
-                                                            alert("Bağlantı kopyalandı!");
-                                                        }
-                                                    } catch (err) {
-                                                        console.error("Paylaşım hatası:", err);
-                                                    }
-                                                }}
-                                                className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
-                                                style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                title="Paylaş"
-                                            >
-                                                <Share2 size={13} />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={async () => {
-                                                    const res = await fetch(result.outputUrl!);
-                                                    const blob = await res.blob();
-                                                    const a = document.createElement("a");
-                                                    a.href = URL.createObjectURL(blob);
-                                                    const base = fileName.replace(/\.[^.]+$/, "");
-                                                    a.download = `${base}_edited.${outputFormat}`;
-                                                    a.click();
-                                                }}
-                                                className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
-                                                style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                title="İndir"
-                                            >
-                                                <Download size={13} />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setResult({})}
-                                                className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
-                                                style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                title="Kapat"
-                                            >
-                                                <X size={13} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <span className="text-[11px] uppercase tracking-wider" style={{ color: "var(--success)" }}>
-                                        Üretilen
-                                    </span>
-                                </div>
-                            ) : isPending ? (
-                                <div
-                                    className="flex flex-col items-center justify-center gap-3"
-                                    style={{
-                                        width: 300,
-                                        height: 300,
-                                        borderRadius: "var(--radius-md)",
-                                        border: "1px dashed var(--border)",
-                                        backgroundColor: "var(--bg-secondary)",
-                                    }}
-                                >
-                                    <Loader2 size={24} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
-                                    <span className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>
-                                        {statusText}
-                                    </span>
-                                </div>
-                            ) : null}
-                        </>
-                    ) : (
-                        <div
-                            onDragOver={onDragOver}
-                            onDragLeave={onDragLeave}
-                            onDrop={onDrop}
-                            className="w-full max-w-md flex flex-col items-center justify-center gap-4 py-16 transition-colors"
-                            style={{
-                                borderRadius: "var(--radius-lg)",
-                                border: `2px dashed ${isDragging ? "var(--text-secondary)" : "var(--border)"}`,
-                                backgroundColor: isDragging ? "var(--bg-secondary)" : "transparent",
-                            }}
-                        >
-                            <div className="flex w-full gap-4 px-8">
-                                <button
-                                    type="button"
-                                    onClick={() => fileRef.current?.click()}
-                                    className="flex-1 flex flex-col items-center justify-center gap-3 p-6 transition-colors hover:bg-[var(--bg-secondary)]"
-                                    style={{
-                                        borderRadius: "var(--radius-md)",
-                                        border: "1px solid var(--border)",
-                                    }}
-                                >
-                                    <ImageIcon size={24} style={{ color: "var(--text-tertiary)" }} />
-                                    <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Dosya Seç</span>
-                                    <span className="text-[10px] text-center" style={{ color: "var(--text-tertiary)", marginTop: -4 }}>veya sürükle bırak</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => cameraRef.current?.click()}
-                                    className="flex-1 flex flex-col items-center justify-center gap-3 p-6 transition-colors hover:bg-[var(--bg-secondary)]"
-                                    style={{
-                                        borderRadius: "var(--radius-md)",
-                                        border: "1px solid var(--border)",
-                                    }}
-                                >
-                                    <Camera size={24} style={{ color: "var(--text-tertiary)" }} />
-                                    <span className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>Fotoğraf Çek</span>
-                                    <span className="text-[10px] text-center" style={{ color: "var(--text-tertiary)", marginTop: -4 }}>Kamerayı açar</span>
-                                </button>
-                            </div>
-
-                            <div className="text-center mt-2">
-                                <p className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>
-                                    PNG, JPG, WEBP — maks. 20MB
-                                </p>
-                            </div>
-                        </div>
-                    )
+                    /* ── Ring Canvas ── */
+                    <RingCanvas
+                        preview={preview}
+                        fileName={fileName}
+                        outputFormat={outputFormat}
+                        isDragging={isDragging}
+                        isPending={isPending}
+                        statusText={statusText}
+                        result={result}
+                        fileRef={fileRef}
+                        cameraRef={cameraRef}
+                        onFileChange={handleFileChange}
+                        onClearImage={clearImage}
+                        onDragOver={onDragOver}
+                        onDragLeave={onDragLeave}
+                        onDrop={onDrop}
+                        onClearResult={() => setResult({})}
+                    />
                 ) : category === "kolye" ? (
-                    /* ── Necklace Canvas (5 image slots + Result) ── */
-                    <div className="w-full h-full flex flex-col items-center justify-start gap-6 pt-4 pb-4 overflow-y-auto">
-                        {/* Top Row: 5 Image Slots */}
-                        <div className="w-full max-w-5xl grid grid-cols-5 gap-3 px-4 shrink-0">
-                            {NECKLACE_SLOTS.map((slot) => {
-                                const slotData = necklaceFiles[slot.key];
-                                const SlotIcon = slot.icon;
-                                return (
-                                    <div key={slot.key} className="flex flex-col gap-1.5 shrink-0">
-                                        <span className="text-[11px] uppercase tracking-wider text-center" style={{ color: "var(--text-tertiary)" }}>
-                                            {slot.label}
-                                        </span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            ref={(el) => { necklaceFileRefs.current[slot.key] = el; }}
-                                            onChange={(e) => {
-                                                const f = e.target.files?.[0];
-                                                if (f) handleNecklaceFile(slot.key, f);
-                                            }}
-                                        />
-                                        {slotData ? (
-                                            <div className="relative group w-full">
-                                                <img
-                                                    src={slotData.preview}
-                                                    alt={slot.label}
-                                                    className="w-full object-cover"
-                                                    style={{
-                                                        aspectRatio: "1/1",
-                                                        borderRadius: "var(--radius-md)",
-                                                        border: "1px solid var(--border)",
-                                                    }}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => clearNecklaceSlot(slot.key)}
-                                                    className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                >
-                                                    <X size={12} />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div
-                                                onClick={() => necklaceFileRefs.current[slot.key]?.click()}
-                                                onDragOver={(e) => { e.preventDefault(); }}
-                                                onDrop={(e) => {
-                                                    e.preventDefault();
-                                                    const f = e.dataTransfer.files[0];
-                                                    if (f) handleNecklaceFile(slot.key, f);
-                                                }}
-                                                className="w-full cursor-pointer flex flex-col items-center justify-center gap-2 transition-colors hover:border-[var(--text-tertiary)]"
-                                                style={{
-                                                    aspectRatio: "1/1",
-                                                    borderRadius: "var(--radius-md)",
-                                                    border: "2px dashed var(--border)",
-                                                    backgroundColor: "var(--bg-secondary)",
-                                                }}
-                                            >
-                                                <SlotIcon size={20} style={{ color: "var(--text-tertiary)" }} />
-                                                <span className="text-[10px] text-center px-1" style={{ color: "var(--text-tertiary)" }}>
-                                                    {slot.description}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {/* Bottom Area: Result or Pending */}
-                        {(result.outputUrl || isPending || result.error) && (
-                            <div className="w-full max-w-4xl flex-1 flex flex-col items-center justify-center min-h-[300px] mt-4 mb-8 shrink-0">
-                                {result.outputUrl ? (
-                                    <div className="flex flex-col items-center gap-2 max-w-full">
-                                        <div className="relative group">
-                                            <img
-                                                src={result.outputUrl}
-                                                alt="Üretilen"
-                                                className="max-h-[60vh] max-w-full object-contain"
-                                                style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}
-                                            />
-                                            <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    type="button"
-                                                    onClick={async () => {
-                                                        try {
-                                                            const text = "Powered by Jewelshot®";
-                                                            const url = "https://jewelshot.app";
-                                                            let files: File[] = [];
-
-                                                            try {
-                                                                const res = await fetch(result.outputUrl!);
-                                                                const blob = await res.blob();
-                                                                const base = fileName.replace(/\.[^.]+$/, "");
-                                                                const file = new File([blob], `${base}_edited.${outputFormat}`, { type: blob.type });
-                                                                files = [file];
-                                                            } catch (e) {
-                                                                console.error("Görsel bloba çevrilemedi.", e);
-                                                            }
-
-                                                            if (navigator.share) {
-                                                                const shareData: ShareData = { text, url };
-                                                                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-                                                                    shareData.files = files;
-                                                                }
-                                                                await navigator.share(shareData);
-                                                            } else {
-                                                                await navigator.clipboard.writeText(`${text}\n${url}`);
-                                                                alert("Bağlantı kopyalandı!");
-                                                            }
-                                                        } catch (err) {
-                                                            console.error("Paylaşım hatası:", err);
-                                                        }
-                                                    }}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="Paylaş"
-                                                >
-                                                    <Share2 size={13} />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={async () => {
-                                                        const res = await fetch(result.outputUrl!);
-                                                        const blob = await res.blob();
-                                                        const a = document.createElement("a");
-                                                        a.href = URL.createObjectURL(blob);
-                                                        a.download = `necklace_edited.${outputFormat}`;
-                                                        a.click();
-                                                    }}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="İndir"
-                                                >
-                                                    <Download size={13} />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setResult({})}
-                                                    className="w-7 h-7 flex items-center justify-center rounded-full cursor-pointer"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="Kapat"
-                                                >
-                                                    <X size={13} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <span className="text-[11px] uppercase tracking-wider" style={{ color: "var(--success)" }}>
-                                            Üretilen
-                                        </span>
-                                    </div>
-                                ) : isPending ? (
-                                    <div
-                                        className="flex flex-col items-center justify-center gap-3"
-                                        style={{
-                                            width: 300,
-                                            height: 300,
-                                            borderRadius: "var(--radius-md)",
-                                            border: "1px dashed var(--border)",
-                                            backgroundColor: "var(--bg-secondary)",
-                                        }}
-                                    >
-                                        <Loader2 size={24} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
-                                        <span className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>
-                                            {statusText}
-                                        </span>
-                                    </div>
-                                ) : null}
-                            </div>
-                        )}
-                    </div>
+                    /* ── Necklace Canvas ── */
+                    <NecklaceCanvas
+                        necklaceFiles={necklaceFiles}
+                        necklaceFileRefs={necklaceFileRefs}
+                        isPending={isPending}
+                        statusText={statusText}
+                        result={result}
+                        outputFormat={outputFormat}
+                        onFileChange={handleNecklaceFile}
+                        onClearSlot={clearNecklaceSlot}
+                        onClearResult={() => setResult({})}
+                    />
                 ) : category === "kupe" ? (
-                    /* ── Earring Canvas (Front/Side image slots + Result) ── */
-                    <div className="w-full h-full flex flex-col items-center justify-start gap-6 pt-4 pb-4 overflow-y-auto">
-                        <div className="w-full max-w-lg grid grid-cols-2 gap-4 px-4 shrink-0">
-                            {EARRING_SLOTS.map((slot) => {
-                                const slotData = earringFiles[slot.key];
-                                const SlotIcon = slot.icon;
-                                return (
-                                    <div key={slot.key} className="flex flex-col gap-1.5 shrink-0">
-                                        <span className="text-[12px] uppercase tracking-wider text-center font-medium" style={{ color: "var(--text-tertiary)" }}>
-                                            {slot.label}
-                                        </span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            ref={(el) => { earringFileRefs.current[slot.key] = el; }}
-                                            onChange={(e) => {
-                                                const f = e.target.files?.[0];
-                                                if (f) handleEarringFile(slot.key, f);
-                                            }}
-                                        />
-                                        {slotData ? (
-                                            <div className="relative group w-full">
-                                                <img
-                                                    src={slotData.preview}
-                                                    alt={slot.label}
-                                                    className="w-full object-cover"
-                                                    style={{
-                                                        aspectRatio: "1/1",
-                                                        borderRadius: "var(--radius-md)",
-                                                        border: "1px solid var(--border)",
-                                                    }}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => clearEarringSlot(slot.key)}
-                                                    className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                >
-                                                    <X size={14} />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div
-                                                onClick={() => earringFileRefs.current[slot.key]?.click()}
-                                                onDragOver={(e) => { e.preventDefault(); }}
-                                                onDrop={(e) => {
-                                                    e.preventDefault();
-                                                    const f = e.dataTransfer.files[0];
-                                                    if (f) handleEarringFile(slot.key, f);
-                                                }}
-                                                className="w-full cursor-pointer flex flex-col items-center justify-center gap-2 transition-colors hover:border-[var(--text-tertiary)]"
-                                                style={{
-                                                    aspectRatio: "1/1",
-                                                    borderRadius: "var(--radius-md)",
-                                                    border: "2px dashed var(--border)",
-                                                    backgroundColor: "var(--bg-secondary)",
-                                                }}
-                                            >
-                                                <SlotIcon size={24} style={{ color: "var(--text-tertiary)" }} />
-                                                <span className="text-[11px] text-center px-2" style={{ color: "var(--text-tertiary)" }}>
-                                                    {slot.description}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {(result.outputUrl || isPending || result.error) && (
-                            <div className="w-full flex-1 flex flex-col items-center justify-center min-h-[300px] mt-4 mb-8 shrink-0">
-                                {result.outputUrl ? (
-                                    <div className="flex flex-col items-center gap-2 max-w-full">
-                                        <div className="relative group">
-                                            <img
-                                                src={result.outputUrl}
-                                                alt="Üretilen"
-                                                className="max-h-[60vh] max-w-full object-contain"
-                                                style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}
-                                            />
-                                            <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    type="button"
-                                                    onClick={async () => {
-                                                        try {
-                                                            const text = "Powered by Jewelshot®";
-                                                            const url = "https://jewelshot.app";
-                                                            let files: File[] = [];
-
-                                                            try {
-                                                                const res = await fetch(result.outputUrl!);
-                                                                const blob = await res.blob();
-                                                                const file = new File([blob], `earring_edited.${outputFormat}`, { type: blob.type });
-                                                                files = [file];
-                                                            } catch (e) {
-                                                                console.error("Görsel bloba çevrilemedi.", e);
-                                                            }
-
-                                                            if (navigator.share) {
-                                                                const shareData: ShareData = { text, url };
-                                                                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-                                                                    shareData.files = files;
-                                                                }
-                                                                await navigator.share(shareData);
-                                                            } else {
-                                                                await navigator.clipboard.writeText(`${text}\n${url}`);
-                                                                alert("Bağlantı kopyalandı!");
-                                                            }
-                                                        } catch (err) {
-                                                            console.error("Paylaşım hatası:", err);
-                                                        }
-                                                    }}
-                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="Paylaş"
-                                                >
-                                                    <Share2 size={14} />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={async () => {
-                                                        const res = await fetch(result.outputUrl!);
-                                                        const blob = await res.blob();
-                                                        const a = document.createElement("a");
-                                                        a.href = URL.createObjectURL(blob);
-                                                        a.download = `earring_edited.${outputFormat}`;
-                                                        a.click();
-                                                    }}
-                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="İndir"
-                                                >
-                                                    <Download size={14} />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setResult({})}
-                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="Kapat"
-                                                >
-                                                    <X size={14} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <span className="text-[12px] uppercase tracking-wider font-medium" style={{ color: "var(--success)" }}>
-                                            Küpeler Üretildi
-                                        </span>
-                                    </div>
-                                ) : isPending ? (
-                                    <div
-                                        className="flex flex-col items-center justify-center gap-3 shadow-sm"
-                                        style={{
-                                            width: 300,
-                                            height: 300,
-                                            borderRadius: "var(--radius-md)",
-                                            border: "1px dashed var(--border)",
-                                            backgroundColor: "var(--bg-secondary)",
-                                        }}
-                                    >
-                                        <Loader2 size={24} className="animate-spin text-tertiary" />
-                                        <span className="text-[12px] font-medium text-tertiary">
-                                            {statusText || "Küpeler oluşturuluyor..."}
-                                        </span>
-                                    </div>
-                                ) : null}
-                            </div>
-                        )}
-                    </div>
+                    /* ── Earring Canvas ── */
+                    <EarringCanvas
+                        earringFiles={earringFiles}
+                        earringFileRefs={earringFileRefs}
+                        isPending={isPending}
+                        statusText={statusText}
+                        result={result}
+                        outputFormat={outputFormat}
+                        onFileChange={handleEarringFile}
+                        onClearSlot={clearEarringSlot}
+                        onClearResult={() => setResult({})}
+                    />
                 ) : category === "bileklik" ? (
-                    /* ── Bracelet Canvas (Front/Detail image slots + Result) ── */
-                    <div className="w-full h-full flex flex-col items-center justify-start gap-6 pt-4 pb-4 overflow-y-auto">
-                        <div className="w-full max-w-lg grid grid-cols-2 gap-4 px-4 shrink-0">
-                            {BRACELET_SLOTS.map((slot) => {
-                                const slotData = braceletFiles[slot.key];
-                                const SlotIcon = slot.icon;
-                                return (
-                                    <div key={slot.key} className="flex flex-col gap-1.5 shrink-0">
-                                        <span className="text-[12px] uppercase tracking-wider text-center font-medium" style={{ color: "var(--text-tertiary)" }}>
-                                            {slot.label}
-                                        </span>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            className="hidden"
-                                            ref={(el) => { braceletFileRefs.current[slot.key] = el; }}
-                                            onChange={(e) => {
-                                                const f = e.target.files?.[0];
-                                                if (f) handleBraceletFile(slot.key, f);
-                                            }}
-                                        />
-                                        {slotData ? (
-                                            <div className="relative group w-full">
-                                                <img
-                                                    src={slotData.preview}
-                                                    alt={slot.label}
-                                                    className="w-full object-cover"
-                                                    style={{
-                                                        aspectRatio: "1/1",
-                                                        borderRadius: "var(--radius-md)",
-                                                        border: "1px solid var(--border)",
-                                                    }}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => clearBraceletSlot(slot.key)}
-                                                    className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                >
-                                                    <X size={14} />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div
-                                                onClick={() => braceletFileRefs.current[slot.key]?.click()}
-                                                onDragOver={(e) => { e.preventDefault(); }}
-                                                onDrop={(e) => {
-                                                    e.preventDefault();
-                                                    const f = e.dataTransfer.files[0];
-                                                    if (f) handleBraceletFile(slot.key, f);
-                                                }}
-                                                className="w-full cursor-pointer flex flex-col items-center justify-center gap-2 transition-colors hover:border-[var(--text-tertiary)]"
-                                                style={{
-                                                    aspectRatio: "1/1",
-                                                    borderRadius: "var(--radius-md)",
-                                                    border: "2px dashed var(--border)",
-                                                    backgroundColor: "var(--bg-secondary)",
-                                                }}
-                                            >
-                                                <SlotIcon size={24} style={{ color: "var(--text-tertiary)" }} />
-                                                <span className="text-[11px] text-center px-2" style={{ color: "var(--text-tertiary)" }}>
-                                                    {slot.description}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {(result.outputUrl || isPending || result.error) && (
-                            <div className="w-full flex-1 flex flex-col items-center justify-center min-h-[300px] mt-4 mb-8 shrink-0">
-                                {result.outputUrl ? (
-                                    <div className="flex flex-col items-center gap-2 max-w-full">
-                                        <div className="relative group">
-                                            <img
-                                                src={result.outputUrl}
-                                                alt="Üretilen"
-                                                className="max-h-[60vh] max-w-full object-contain"
-                                                style={{ border: "1px solid var(--border)", borderRadius: "var(--radius-md)" }}
-                                            />
-                                            <div className="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button
-                                                    type="button"
-                                                    onClick={async () => {
-                                                        try {
-                                                            const text = "Powered by Jewelshot®";
-                                                            const url = "https://jewelshot.app";
-                                                            let files: File[] = [];
-
-                                                            try {
-                                                                const res = await fetch(result.outputUrl!);
-                                                                const blob = await res.blob();
-                                                                const file = new File([blob], `bracelet_edited.${outputFormat}`, { type: blob.type });
-                                                                files = [file];
-                                                            } catch (e) {
-                                                                console.error("Görsel bloba çevrilemedi.", e);
-                                                            }
-
-                                                            if (navigator.share) {
-                                                                const shareData: ShareData = { text, url };
-                                                                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-                                                                    shareData.files = files;
-                                                                }
-                                                                await navigator.share(shareData);
-                                                            } else {
-                                                                await navigator.clipboard.writeText(`${text}\n${url}`);
-                                                                alert("Bağlantı kopyalandı!");
-                                                            }
-                                                        } catch (err) {
-                                                            console.error("Paylaşım hatası:", err);
-                                                        }
-                                                    }}
-                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="Paylaş"
-                                                >
-                                                    <Share2 size={14} />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={async () => {
-                                                        const res = await fetch(result.outputUrl!);
-                                                        const blob = await res.blob();
-                                                        const a = document.createElement("a");
-                                                        a.href = URL.createObjectURL(blob);
-                                                        a.download = `bracelet_edited.${outputFormat}`;
-                                                        a.click();
-                                                    }}
-                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="İndir"
-                                                >
-                                                    <Download size={14} />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setResult({})}
-                                                    className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer shadow-md"
-                                                    style={{ backgroundColor: "rgba(0,0,0,0.7)", color: "#fff" }}
-                                                    title="Kapat"
-                                                >
-                                                    <X size={14} />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <span className="text-[12px] uppercase tracking-wider font-medium" style={{ color: "var(--success)" }}>
-                                            Bileklik Üretildi
-                                        </span>
-                                    </div>
-                                ) : isPending ? (
-                                    <div
-                                        className="flex flex-col items-center justify-center gap-3 shadow-sm"
-                                        style={{
-                                            width: 300,
-                                            height: 300,
-                                            borderRadius: "var(--radius-md)",
-                                            border: "1px dashed var(--border)",
-                                            backgroundColor: "var(--bg-secondary)",
-                                        }}
-                                    >
-                                        <Loader2 size={24} className="animate-spin text-tertiary" />
-                                        <span className="text-[12px] font-medium text-tertiary">
-                                            {statusText || "Bileklik oluşturuluyor..."}
-                                        </span>
-                                    </div>
-                                ) : null}
-                            </div>
-                        )}
-                    </div>
+                    /* ── Bracelet Canvas ── */
+                    <BraceletCanvas
+                        braceletFiles={braceletFiles}
+                        braceletFileRefs={braceletFileRefs}
+                        isPending={isPending}
+                        statusText={statusText}
+                        result={result}
+                        outputFormat={outputFormat}
+                        onFileChange={handleBraceletFile}
+                        onClearSlot={clearBraceletSlot}
+                        onClearResult={() => setResult({})}
+                    />
                 ) : (
                     /* ── Placeholder for Others ── */
                     <div className="flex flex-col items-center justify-center flex-1 text-center opacity-60 w-full min-h-[300px]">
@@ -1251,92 +603,94 @@ export default function StudioClient({ prompts }: Props) {
                 )}
             </div>
 
-            {/* Mobile Styles & Generate Form (Visible only on md:hidden) */}
-            <div className="md:hidden flex flex-col shrink-0 mt-auto pt-2 pb-2 border-t border-[var(--border)] relative z-10 bg-[var(--bg-primary)] -mx-4 px-4 sm:-mx-6 sm:px-6">
-                <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--text-tertiary)" }}>Stil</span>
-                    <button
-                        type="button"
-                        onClick={() => setShowSettings(true)}
-                        className="text-[11px] flex gap-1 items-center font-medium"
-                        style={{ color: "var(--text-primary)" }}
-                    >
-                        <Settings size={12} />
-                        Ayarlar
-                    </button>
-                </div>
-                <div className="flex overflow-x-auto gap-3 pb-3 scrollbar-hide snap-x">
-                    {filteredPrompts.length > 0 ? filteredPrompts.map((p, i) => {
-                        const handleStyleClick = () => {
-                            setSelectedPrompt(p.id);
-                            if (category === "yuzuk" && file) {
-                                setTimeout(() => {
-                                    const btn = document.getElementById("generate-btn-mobile");
-                                    btn?.click();
-                                }, 50);
-                            }
-                        };
-                        const presetPrefix = category === "yuzuk" ? "ring" : category;
-                        return (
-                            <button
-                                key={`m-${p.id}`}
-                                type="button"
-                                onClick={handleStyleClick}
-                                className="flex flex-col cursor-pointer transition-colors overflow-hidden shrink-0 w-20 snap-start"
-                                style={{
-                                    borderRadius: "var(--radius-md)",
-                                    border: selectedPrompt === p.id ? "1px solid var(--text-primary)" : "1px solid var(--border)",
-                                    backgroundColor: selectedPrompt === p.id ? "var(--bg-secondary)" : "transparent",
-                                }}
-                            >
-                                <img
-                                    src={`/presets/${presetPrefix}_${i + 1}.png`}
-                                    alt={`Stil ${i + 1}`}
-                                    className="w-full object-cover"
-                                    style={{ aspectRatio: "1/1" }}
-                                />
-                                <span
-                                    className="text-[10px] py-1 px-1.5 w-full text-center truncate"
-                                    style={{ color: selectedPrompt === p.id ? "var(--text-primary)" : "var(--text-secondary)" }}
-                                >
-                                    Stil {i + 1}
-                                </span>
-                            </button>
-                        );
-                    }) : (
-                        <div className="flex flex-col items-center justify-center p-4 gap-1 w-full border border-dashed border-[var(--border)] rounded-md">
-                            <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>Yakında</span>
-                        </div>
-                    )}
-                </div>
 
-                <button
-                    id="generate-btn-mobile"
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={
-                        isPending ||
-                        (category === "yuzuk" && !file) ||
-                        (category === "kolye" && !necklaceFiles.genel) ||
-                        (category === "kupe" && !earringFiles.onden) ||
-                        (category === "bileklik" && !braceletFiles.ustten) ||
-                        !selectedPrompt
+
+            {/* Mobile Styles & Generate Form (Visible only on md:hidden) */ }
+    <div className="md:hidden flex flex-col shrink-0 mt-auto pt-2 pb-2 border-t border-[var(--border)] relative z-10 bg-[var(--bg-primary)] -mx-4 px-4 sm:-mx-6 sm:px-6">
+        <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--text-tertiary)" }}>Stil</span>
+            <button
+                type="button"
+                onClick={() => setShowSettings(true)}
+                className="text-[11px] flex gap-1 items-center font-medium"
+                style={{ color: "var(--text-primary)" }}
+            >
+                <Settings size={12} />
+                Ayarlar
+            </button>
+        </div>
+        <div className="flex overflow-x-auto gap-3 pb-3 scrollbar-hide snap-x">
+            {filteredPrompts.length > 0 ? filteredPrompts.map((p, i) => {
+                const handleStyleClick = () => {
+                    setSelectedPrompt(p.id);
+                    if (category === "yuzuk" && file) {
+                        setTimeout(() => {
+                            const btn = document.getElementById("generate-btn-mobile");
+                            btn?.click();
+                        }, 50);
                     }
-                    className="btn-primary flex items-center justify-center gap-2 w-full mt-1"
-                >
-                    {isPending ? (
-                        <>
-                            <Loader2 size={14} className="animate-spin" />
-                            {statusText}
-                        </>
-                    ) : (
-                        <>
-                            <Zap size={14} fill="currentColor" />
-                            Çekimi Başlat
-                        </>
-                    )}
-                </button>
-            </div>
+                };
+                const presetPrefix = category === "yuzuk" ? "ring" : category;
+                return (
+                    <button
+                        key={`m-${p.id}`}
+                        type="button"
+                        onClick={handleStyleClick}
+                        className="flex flex-col cursor-pointer transition-colors overflow-hidden shrink-0 w-20 snap-start"
+                        style={{
+                            borderRadius: "var(--radius-md)",
+                            border: selectedPrompt === p.id ? "1px solid var(--text-primary)" : "1px solid var(--border)",
+                            backgroundColor: selectedPrompt === p.id ? "var(--bg-secondary)" : "transparent",
+                        }}
+                    >
+                        <img
+                            src={`/presets/${presetPrefix}_${i + 1}.png`}
+                            alt={`Stil ${i + 1}`}
+                            className="w-full object-cover"
+                            style={{ aspectRatio: "1/1" }}
+                        />
+                        <span
+                            className="text-[10px] py-1 px-1.5 w-full text-center truncate"
+                            style={{ color: selectedPrompt === p.id ? "var(--text-primary)" : "var(--text-secondary)" }}
+                        >
+                            Stil {i + 1}
+                        </span>
+                    </button>
+                );
+            }) : (
+                <div className="flex flex-col items-center justify-center p-4 gap-1 w-full border border-dashed border-[var(--border)] rounded-md">
+                    <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>Yakında</span>
+                </div>
+            )}
+        </div>
+
+        <button
+            id="generate-btn-mobile"
+            type="button"
+            onClick={handleSubmit}
+            disabled={
+                isPending ||
+                (category === "yuzuk" && !file) ||
+                (category === "kolye" && !necklaceFiles.genel) ||
+                (category === "kupe" && !earringFiles.onden) ||
+                (category === "bileklik" && !braceletFiles.ustten) ||
+                !selectedPrompt
+            }
+            className="btn-primary flex items-center justify-center gap-2 w-full mt-1"
+        >
+            {isPending ? (
+                <>
+                    <Loader2 size={14} className="animate-spin" />
+                    {statusText}
+                </>
+            ) : (
+                <>
+                    <Zap size={14} fill="currentColor" />
+                    Çekimi Başlat
+                </>
+            )}
+        </button>
+    </div>
         </div >
     );
 }
