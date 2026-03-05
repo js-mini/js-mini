@@ -226,6 +226,8 @@ export default function StudioClient({ prompts }: Props) {
                     metalColor,
                 });
                 setResult(res);
+                if (res.outputUrl) router.refresh();
+
             } else if (category === "kolye") {
                 // Necklace: upload all available images in parallel
                 const slots: NecklaceSlot[] = ["kilavuz", "genel", "uc", "zincir", "kilit"];
@@ -257,10 +259,10 @@ export default function StudioClient({ prompts }: Props) {
                     .map(r => r.falUrl);
 
                 setStatusText("Görsel üretiliyor...");
-                const res = await generateAction({
+                const necklaceRes = await generateAction({
                     falImageUrl: generalUpload.falUrl,
                     additionalFalImageUrls: additionalUrls,
-                    guideImageUrl: guideUpload?.falUrl, // Pass user uploaded guide!
+                    guideImageUrl: guideUpload?.falUrl,
                     inputStorageUrl: generalUpload.storagePath,
                     promptId: selectedPrompt,
                     aspectRatio,
@@ -271,7 +273,9 @@ export default function StudioClient({ prompts }: Props) {
                     category,
                     metalColor,
                 });
-                setResult(res);
+                setResult(necklaceRes);
+                if (necklaceRes.outputUrl) router.refresh();
+
             } else if (category === "kupe") {
                 // Earring: parallel upload for 'onden' and 'yandan'
                 const slots: EarringSlot[] = ["onden", "yandan"];
@@ -294,12 +298,12 @@ export default function StudioClient({ prompts }: Props) {
                 }
 
                 const sideUpload = uploadResults.find(r => r?.slot === "yandan");
-                const additionalUrls = sideUpload ? [sideUpload.falUrl] : [];
+                const earringAdditional = sideUpload ? [sideUpload.falUrl] : [];
 
                 setStatusText("Görsel üretiliyor...");
-                const res = await generateAction({
+                const earringRes = await generateAction({
                     falImageUrl: frontUpload.falUrl,
-                    additionalFalImageUrls: additionalUrls,
+                    additionalFalImageUrls: earringAdditional,
                     guideImageUrl: undefined,
                     inputStorageUrl: frontUpload.storagePath,
                     promptId: selectedPrompt,
@@ -311,7 +315,9 @@ export default function StudioClient({ prompts }: Props) {
                     category,
                     metalColor,
                 });
-                setResult(res);
+                setResult(earringRes);
+                if (earringRes.outputUrl) router.refresh();
+
             } else if (category === "bileklik") {
                 const slots: BraceletSlot[] = ["ustten", "detay"];
                 const uploadPromises = slots.map(async (slot) => {
@@ -333,12 +339,12 @@ export default function StudioClient({ prompts }: Props) {
                 }
 
                 const detailUpload = uploadResults.find(r => r?.slot === "detay");
-                const additionalUrls = detailUpload ? [detailUpload.falUrl] : [];
+                const braceletAdditional = detailUpload ? [detailUpload.falUrl] : [];
 
                 setStatusText("Görsel üretiliyor...");
-                const res = await generateAction({
+                const braceletRes = await generateAction({
                     falImageUrl: topUpload.falUrl,
-                    additionalFalImageUrls: additionalUrls,
+                    additionalFalImageUrls: braceletAdditional,
                     guideImageUrl: undefined,
                     inputStorageUrl: topUpload.storagePath,
                     promptId: selectedPrompt,
@@ -350,7 +356,8 @@ export default function StudioClient({ prompts }: Props) {
                     category,
                     metalColor,
                 });
-                setResult(res);
+                setResult(braceletRes);
+                if (braceletRes.outputUrl) router.refresh();
             }
         } catch {
             setResult({ error: "Bir hata oluştu." });
@@ -358,7 +365,6 @@ export default function StudioClient({ prompts }: Props) {
 
         setIsPending(false);
         setStatusText("");
-        router.refresh();
     };
 
     // Compact settings label for header
