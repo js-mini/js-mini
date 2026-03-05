@@ -15,6 +15,7 @@ export type Prompt = {
     description: string | null;
     template: string;
     category: string;
+    reference_image_url: string | null; // used in studio-client prompt selection
     is_active: boolean;
     sort_order: number;
     created_at: string;
@@ -29,7 +30,7 @@ export type Generation = {
     output_image_url: string | null;
     prompt_text: string;
     status: "pending" | "processing" | "completed" | "failed";
-    fal_request_id: string | null;
+    fal_request_id: string | null; // stored for debugging; not read back by the app
     credits_used: number;
     created_at: string;
 };
@@ -38,7 +39,7 @@ export type CreditTransaction = {
     id: string;
     user_id: string;
     amount: number;
-    type: "purchase" | "usage" | "refund" | "bonus";
+    type: "purchase" | "usage" | "refund"; // "bonus" removed — never written by the app
     description: string | null;
     reference_id: string | null;
     created_at: string;

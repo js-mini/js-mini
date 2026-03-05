@@ -48,7 +48,7 @@ export const POST = Webhook({
 
         const checkoutId = id;
         const amountInMinorUnit = product?.price || 0;
-        const currencyCode = product?.currency || 'USD';
+        const currencyCode = product?.currency || 'TRY';
 
         // ─── FIX #2 + FIX #3: Single atomic Postgres RPC.
         //     This does idempotency check + payment INSERT + credits UPDATE
